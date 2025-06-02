@@ -19,19 +19,19 @@ public:
     {
         imagePaths = imagenes;
 
-        if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
+        if (!texture.loadFromFile("assets/imagen/" + imagePaths[currentImageIndex]))
         {
             throw "No se encontró imagen";
         }
         sprite = sf::Sprite(texture);
 
-        if (!font.loadFromFile("assets/fonts/Minecraft.ttf"))
+        if (!font.loadFromFile("assets/fonts/Dead Stock.ttf"))
         {
             throw "No se pudo cargar la fuente";
         }
 
         text.setFont(font);
-        text.setString("Bienvenido a Street pikachu\nPresiona Enter para jugar");
+        text.setString("Bienvenido a Cobra Kai\nPresiona Enter para jugar");
         text.setCharacterSize(30);
         text.setFillColor(sf::Color::Black);
         text.setPosition(120, 180);
@@ -58,7 +58,7 @@ public:
         {
             currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
 
-            if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
+            if (!texture.loadFromFile("assets/imagen/" + imagePaths[currentImageIndex]))
             {
                 throw "No se encontró la imagen";
             }
