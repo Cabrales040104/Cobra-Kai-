@@ -26,3 +26,13 @@ clean:
 	-$(RM) -r build $(TARGET)
 
 .PHONY: all run clean
+
+run: 
+    .\bin\COBRAKAI.exe
+
+compile:
+	g++ menu.cpp -o bin/COBRAKAI.exe -Iinclude -Llib -lsfml-graphics -lsfml-window -lsfml-system\
+	.\bin\COBRAKAI.exe
+
+
+
