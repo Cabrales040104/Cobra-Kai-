@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
@@ -19,7 +20,7 @@ public:
     {
         imagePaths = imagenes;
 
-        if (!texture.loadFromFile("assets/imagen/" + imagePaths[currentImageIndex]))
+        if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
         {
             throw "No se encontró imagen";
         }
@@ -58,7 +59,7 @@ public:
         {
             currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
 
-            if (!texture.loadFromFile("assets/imagen/" + imagePaths[currentImageIndex]))
+            if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
             {
                 throw "No se encontró la imagen";
             }
@@ -73,4 +74,7 @@ public:
     {
         return font;
     }
-};
+    return 0;
+}   
+ 
+
