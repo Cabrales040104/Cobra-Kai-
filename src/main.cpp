@@ -32,7 +32,7 @@ int main()
         sf::Keyboard::U      // especial
     );
 
-    Personaje Dan(sf::Vector2f(440, 240), "ADann.png", control1, {381, 55});
+    Personaje Dan(sf::Vector2f(440, 240), "ADan.png", control1, {381, 55});
     Personaje Johnn(sf::Vector2f(130, 240), "AJohnn.png", control2, {8, 55});
 
     // Crear el texto de victoria
