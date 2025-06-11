@@ -15,7 +15,7 @@ public:
   Vida(int maxHealth, sf::Vector2f position)
       : maxHealth(maxHealth), currentHealth(maxHealth), position(position)
   {
-    if (!font.loadFromFile("./assets/fonts/Minecraft.ttf"))
+    if (!font.loadFromFile("./assets/fonts/Dead Stock.ttf"))
     {
       throw std::runtime_error("No se pudo cargar la fuente");
     }
