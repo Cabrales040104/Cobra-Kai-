@@ -14,7 +14,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(640, 435), "Cobra Kai", sf::Style::Close | sf::Style::Titlebar);
 
     // Crear una lista de imágenes que se mostrarán en el menú
-    std::vector<std::string> imagenes = {"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png"};
+    std::vector<std::string> imagenes = {"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"};
         
     Menu menu(imagenes); // Crear el menú con las imágenes
     Campo campo("1.png");
@@ -32,7 +32,7 @@ int main()
         sf::Keyboard::U      // especial
     );
 
-    Personaje Dan(sf::Vector2f(440, 240), "ADan.png", control1, {381, 55});
+    Personaje Dan(sf::Vector2f(440, 240), "ADann.png", control1, {381, 55});
     Personaje Johnn(sf::Vector2f(130, 240), "AJohnn.png", control2, {8, 55});
 
     // Crear el texto de victoria
