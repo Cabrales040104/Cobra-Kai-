@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
 #include <iostream>
 
 class Menu
@@ -74,7 +75,8 @@ public:
     {
         return font;
     }
-    return 0;
-}   
+};
+
+ 
  
 

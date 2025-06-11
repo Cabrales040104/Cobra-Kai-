@@ -2,6 +2,8 @@
 #include <map>
 #include <string>
 #include <iostream> 
+#ifndef CONTROL_HPP
+#define CONTROL_HPP
 
 class Control 
 {
@@ -71,4 +73,8 @@ public:
         }
     }
 };
+
+#endif // CONTROL_HPP
+
+
 

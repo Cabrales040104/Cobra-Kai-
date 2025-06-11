@@ -1,38 +1,34 @@
-CXX ?= g++
-PREFIX ?= /mingw64
-TARGET ?= app
+CXX =	g++
+TARGET =	bin/COBRAKAI.exe
 
-SRC := $(wildcard src/*.cpp)
-OBJ := $(patsubst src/%.cpp,build/%.o,$(SRC))
+SRC :=	$(wildcard src/*.cpp)
+OBJ :=	$(patsubst src/%.cpp,build/%.o,$(SRC))
 
-CXXFLAGS ?= -std=c++17 -Wall -I$(PREFIX)/include -Iinclude
-LDFLAGS  ?= -L$(PREFIX)/lib -lsfml-graphics -lsfml-window -lsfml-system -lmingw32
+CXXFLAGS =	-std=c++17 -Wall -Iinclude
+LDFLAGS  =	-Llib -lsfml-graphics -lsfml-window -lsfml-system
 
-all: $(TARGET)
+all:	$(TARGET)
 
-$(TARGET): $(OBJ)
+$(TARGET):	$(OBJ) | bin
 	$(CXX) $^ -o $@ $(LDFLAGS)
 
-build/%.o: src/%.cpp | build
+build/%.o:	src/%.cpp | build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 build:
-	mkdir -p build
+	mkdir build
 
-run: $(TARGET)
-	./$(TARGET)
+bin:
+	mkdir bin
+
+run:	$(TARGET)
+	.\$(TARGET)
 
 clean:
-	-$(RM) -r build $(TARGET)
+	-del /Q build\* bin\*
 
 .PHONY: all run clean
 
-run: 
-    .\bin\COBRAKAI.exe
-
-compile:
-	g++ menu.cpp -o bin/COBRAKAI.exe -Iinclude -Llib -lsfml-graphics -lsfml-window -lsfml-system\
-	.\bin\COBRAKAI.exe
 
 
 

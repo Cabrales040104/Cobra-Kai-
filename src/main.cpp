@@ -14,17 +14,26 @@ int main()
     sf::RenderWindow window(sf::VideoMode(640, 435), "Cobra Kai", sf::Style::Close | sf::Style::Titlebar);
 
     // Crear una lista de imágenes que se mostrarán en el menú
-    std::vector<std::string> imagenes = {"1.png"};
-
+    std::vector<std::string> imagenes = {"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png"};
+        
     Menu menu(imagenes); // Crear el menú con las imágenes
     Campo campo("1.png");
 
     // Controladores y personajes como antes
     Control control1;
-    Control control2(sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::D, sf::Keyboard::A);
+    Control control2(
+        sf::Keyboard::W,     // arriba
+        sf::Keyboard::S,     // abajo
+        sf::Keyboard::D,     // derecha
+        sf::Keyboard::A,     // izquierda
+        sf::Keyboard::J,     // ataque
+        sf::Keyboard::K,     // defensa
+        sf::Keyboard::L,     // salto
+        sf::Keyboard::U      // especial
+    );
 
-    Personaje ken(sf::Vector2f(440, 240), "pikachu.png", control1, {381, 55});
-    Personaje pika(sf::Vector2f(130, 240), "pikachu.png", control2, {8, 55});
+    Personaje Dan(sf::Vector2f(440, 240), "ADann.png", control1, {381, 55});
+    Personaje Johnn(sf::Vector2f(130, 240), "AJohnn.png", control2, {8, 55});
 
     // Crear el texto de victoria
     sf::Text winText;
@@ -35,29 +44,25 @@ int main()
     bool gameOver = false;   // Para controlar si el juego terminó
     std::string winner = ""; // Para almacenar quién ganó
 
-    // Ciclo para mostrar el menú
-    while (window.isOpen())
+    // ----------- CICLO DEL MENÚ DE INICIO -----------
+    bool enMenu = true;
+    while (window.isOpen() && enMenu)
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
+                enMenu = false; // Salir del menú si se presiona Enter
         }
 
-        // Actualizar el menú (para cambiar las imágenes)
-        menu.actualizar();
-
-        // Si se presiona Enter, iniciar el juego
-        if (menu.iniciarJuego())
-        {
-            break; // Salir del ciclo de menú y comenzar el juego
-        }
-
+        menu.actualizar(); // Actualizar el menú (para cambiar las imágenes)
         window.clear();
         menu.dibujar(window); // Dibujar el menú (que incluye la imagen y el texto)
         window.display();
     }
+    // ----------- FIN DEL CICLO DEL MENÚ DE INICIO -----------
 
     // Aquí ya comenzaría el juego con los personajes
     while (window.isOpen())
@@ -69,28 +74,28 @@ int main()
                 window.close();
         }
 
-        ken.leerTeclado(sf::Keyboard::K);
-        pika.leerTeclado(sf::Keyboard::F);
+        Dan.leerTeclado(sf::Keyboard::K);
+        Johnn.leerTeclado(sf::Keyboard::F);
 
-        ken.actualizar();
-        pika.actualizar();
+        Dan.actualizar();
+        Johnn.actualizar();
 
-        Colision::manejar(ken, pika);
+        Colision::manejar(Dan, Johnn);
 
         // Comprobar si alguien ha ganado
-        if (ken.getHealth() == 0)
+        if (Dan.getHealth() == 0)
         {
             winner = "¡Gano Jugador 1!";
             gameOver = true;
         }
-        else if (pika.getHealth() == 0)
+        else if (Johnn.getHealth() == 0)
         {
             winner = "¡Gano jugador 2!";
             gameOver = true;
         }
 
         window.clear();
-
+    
         // Si el juego ha terminado, mostrar el mensaje de victoria
         if (gameOver)
         {
@@ -108,12 +113,12 @@ int main()
         {
             // Si el juego no ha terminado, se sigue actualizando y dibujando los personajes
             campo.dibujar(window);
-            ken.dibujar(window);
-            pika.dibujar(window);
+            Dan.dibujar(window);
+            Johnn.dibujar(window);
         }
 
         window.display();
     }
 
     return 0;
-};
+}
