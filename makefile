@@ -1,5 +1,5 @@
 CXX =	g++
-TARGET =	bin/COBRAKAI.exe
+TARGET =	main.exe
 
 SRC :=	$(wildcard src/*.cpp)
 OBJ :=	$(patsubst src/%.cpp,build/%.o,$(SRC))
@@ -21,14 +21,13 @@ build:
 bin:
 	mkdir bin
 
-run:	$(TARGET)
-	.\$(TARGET)
+run:	all
+	.\main.exe
 
 clean:
-	-del /Q build\* bin\*
+	-del /Q build\* bin\* main.exe
 
-.PHONY: all run clean
-
+.PHONY:	all run clean
 
 
 
