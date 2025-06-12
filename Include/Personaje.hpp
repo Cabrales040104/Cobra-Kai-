@@ -11,17 +11,20 @@ private:
     sf::Texture texture;
     sf::Clock clock;
     float frameTime = 0.1f;
+
     int cuadroActual = 0;
-    int numFrames = 4;
-    int frameWidth = 32;
-    int frameHeight = 32;
+    int numFrames = 8;           // ✅ Hay 8 cuadros por fila
+    int frameWidth = 48;         // ✅ Ancho correcto del cuadro en el spritesheet
+    int frameHeight = 48;        // ✅ Alto correcto del cuadro en el spritesheet
+
+    int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
     Control control;
     Vida healthBar;
     int score = 0;
 
 public:
     bool atacando = false;
-    bool puedeAtacar = true; // Nuevo flag para controlar el ataque
+    bool puedeAtacar = true;
 
     sf::Sprite sprite;
 
@@ -32,8 +35,15 @@ public:
         {
             throw "No se encontró imagen";
         }
+
         sprite = sf::Sprite(texture);
         sprite.setPosition(position);
+
+        // ✅ Mostrar el primer cuadro del spritesheet
+        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
+
+        // ✅ Ajustar el origen al centro inferior del cuadro
+        sprite.setOrigin(frameWidth / 2.f, frameHeight);
     }
 
     void mover(float offsetX, float offsetY)
@@ -49,17 +59,13 @@ public:
 
     void actualizar()
     {
+        // Animación simple: recorre los cuadros de la fila actual
         if (clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
-            sprite.setTextureRect(sf::IntRect((cuadroActual * 128) + 17, 133, 64, 36));
-            clock.restart();
-        }
-        if (clock.getElapsedTime().asSeconds() >= frameTime)
-        {
-            cuadroActual = (cuadroActual + 1) % numFrames; // Cambia al siguiente cuadro
-            int left = cuadroActual * frameWidth;          // Coordenada x del cuadro actual
-            int top = 0;                                   // Coordenada y (fila 0)
+            int left = cuadroActual * frameWidth;
+            int top = filaActual * frameHeight;
+
             sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
             clock.restart();
         }
@@ -67,39 +73,61 @@ public:
 
     void leerTeclado(sf::Keyboard::Key teclaAtaque)
     {
+        bool movio = false;
+
         if (sf::Keyboard::isKeyPressed(control.moverIzquierda()))
         {
             mover(-velocidad, 0);
-            sprite.setScale(-1.f, 1.f); // Voltear el sprite horizontalmente
+            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
+            movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.moverDerecha()))
         {
             mover(velocidad, 0);
-            sprite.setScale(1.f, 1.f); // Restaurar el sprite a su orientación original
+            sprite.setScale(1.f, 1.f);  // Restaurar orientación
+            movio = true;
         }
 
         if (sf::Keyboard::isKeyPressed(control.moverArriba()))
+        {
             mover(0, -velocidad);
+            movio = true;
+        }
         if (sf::Keyboard::isKeyPressed(control.moverAbajo()))
+        {
             mover(0, velocidad);
+            movio = true;
+        }
 
-        // Solo atacar si la tecla de ataque está presionada y el personaje puede atacar
+        // Ataque
         if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar)
         {
             atacando = true;
-            puedeAtacar = false; // Desactivar ataque hasta que se suelte la tecla
+            puedeAtacar = false;
+            filaActual = 2;  // ✅ Puedes cambiar esto según la fila de animación de ataque
         }
 
-        // Permitir que el personaje pueda atacar de nuevo cuando se suelta la tecla
+        // Permitir ataque nuevamente al soltar tecla
         if (!sf::Keyboard::isKeyPressed(teclaAtaque))
         {
-            puedeAtacar = true; // Permitir el siguiente ataque
+            puedeAtacar = true;
+        }
+
+        // Si se está moviendo, usar fila de movimiento (opcional)
+        if (movio && !atacando)
+        {
+            filaActual = 1;  // ✅ Suponiendo que la fila 1 es de caminar
+        }
+        else if (!movio && !atacando)
+        {
+            filaActual = 0;  // ✅ Fila de idle/inactivo
         }
     }
 
     void takeDamage(int damage)
     {
         healthBar.takeDamage(damage);
+        filaActual = 3; // ✅ Por ejemplo, fila 3 para daño
     }
 
     int getHealth() const
