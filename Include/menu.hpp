@@ -35,7 +35,7 @@ public:
         text.setFont(font);
         text.setString("Bienvenido a Cobra Kai\nPresiona Enter para jugar");
         text.setCharacterSize(30);
-        text.setFillColor(sf::Color::Black);
+        text.setFillColor(sf::Color::White);
         text.setPosition(120, 180);
     }
 
@@ -69,6 +69,22 @@ public:
             clock.restart();
         }
     }
+
+    void ajustarImagenAITamanoVentana(sf::Vector2u windowSize)
+    {
+        if (windowSize.x > 0 && windowSize.y > 0)
+        {
+            sf::Vector2u textureSize = texture.getSize();
+            sprite.setScale(
+                float(windowSize.x) / textureSize.x,
+                float(windowSize.y) / textureSize.y
+            );
+        }
+        else
+        {
+            sprite.setScale(1.f, 1.f); // Escala por defecto si no se proporciona tamaño de ventana
+        }
+    }   
 
     // Método público para obtener la fuente
     sf::Font &getFont()

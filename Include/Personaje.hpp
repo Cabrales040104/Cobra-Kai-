@@ -14,8 +14,8 @@ private:
 
     int cuadroActual = 0;
     int numFrames = 8;           // ✅ Hay 8 cuadros por fila
-    int frameWidth = 48;         // ✅ Ancho correcto del cuadro en el spritesheet
-    int frameHeight = 48;        // ✅ Alto correcto del cuadro en el spritesheet
+    int frameWidth = 128;         // ✅ Ancho correcto del cuadro en el spritesheet
+    int frameHeight = 256;        // ✅ Alto correcto del cuadro en el spritesheet
 
     int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
     Control control;
@@ -36,7 +36,7 @@ public:
             throw "No se encontró imagen";
         }
 
-        sprite = sf::Sprite(texture);
+        sprite.setTexture(texture);
         sprite.setPosition(position);
 
         // ✅ Mostrar el primer cuadro del spritesheet

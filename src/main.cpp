@@ -14,9 +14,10 @@ int main()
     sf::RenderWindow window(sf::VideoMode(960, 654), "Cobra Kai", sf::Style::Close | sf::Style::Titlebar);
 
     // Crear una lista de imágenes que se mostrarán en el menú
-    std::vector<std::string> imagenes = {"1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"};
+    std::vector<std::string> imagenes = {"1.png"};
         
     Menu menu(imagenes); // Crear el menú con las imágenes
+    menu.ajustarImagenAITamanoVentana(window.getSize());
     Campo campo("1.png");
 
     // Controladores y personajes como antes
@@ -65,6 +66,8 @@ int main()
         window.display();
     }
     // ----------- FIN DEL CICLO DEL MENÚ DE INICIO -----------
+
+    campo.cambiarImagen("5.png", window.getSize()); // Cambiar el fondo del campo de batalla
 
     // Aquí ya comenzaría el juego con los personajes
     while (window.isOpen())
