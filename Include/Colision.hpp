@@ -20,26 +20,13 @@ public:
             {
                 if (p1.sprite.getPosition().x < p2.sprite.getPosition().x)
                 {
-                    p1.mover(-interseccion.width / 2, 0);
-                    p2.mover(interseccion.width / 2, 0);
+                    p1.mover(-interseccion.width / 2);
+                    p2.mover(interseccion.width / 2);
                 }
                 else
                 {
-                    p1.mover(interseccion.width / 2, 0);
-                    p2.mover(-interseccion.width / 2, 0);
-                }
-            }
-            else
-            {
-                if (p1.sprite.getPosition().y < p2.sprite.getPosition().y)
-                {
-                    p1.mover(0, -interseccion.height / 2);
-                    p2.mover(0, interseccion.height / 2);
-                }
-                else
-                {
-                    p1.mover(0, interseccion.height / 2);
-                    p2.mover(0, -interseccion.height / 2);
+                    p1.mover(interseccion.width / 2);
+                    p2.mover(-interseccion.width / 2);
                 }
             }
 

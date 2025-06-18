@@ -31,24 +31,31 @@ public:
     Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
         : control(control), healthBar(100, healthBarPosition)
     {
-        if (!texture.loadFromFile("assets/images/" + imagen))
-        {
-            throw "No se encontró imagen";
+       sf::Image img;
+       if (!img.loadFromFile("assets/images/" + imagen)) {
+          throw "No se pudo cargar la imagen: ";
         }
-
+        sf::Vector2u size = img.getSize();
+        for (unsigned int y = 0; y < size.y; ++y) {
+             for (unsigned int x = 0; x < size.x; ++x) {
+             sf::Color c = img.getPixel(x, y);
+             if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21) {
+                 img.setPixel(x, y, sf::Color(0, 0, 0, 0)); 
+             }
+         }
+        }
+        if (!texture.loadFromImage(img)){
+           throw "No se pudo crear la textura";
+        }
         sprite.setTexture(texture);
-        sprite.setPosition(position);
-
-        // ✅ Mostrar el primer cuadro del spritesheet
         sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-
-        // ✅ Ajustar el origen al centro inferior del cuadro
-        sprite.setOrigin(frameWidth / 2.f, frameHeight);
+        sprite.setOrigin(frameWidth / 2.f, frameHeight); 
+        sprite.setPosition(position.x, 654); 
     }
 
-    void mover(float offsetX, float offsetY)
+    void mover(float offsetX)
     {
-        sprite.move(offsetX, offsetY);
+        sprite.move(offsetX, 0);
     }
 
     void dibujar(sf::RenderWindow &window)
@@ -67,6 +74,7 @@ public:
             int top = filaActual * frameHeight;
 
             sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+            sprite.setPosition(sprite.getPosition().x, 654);
             clock.restart();
         }
     }
@@ -77,26 +85,16 @@ public:
 
         if (sf::Keyboard::isKeyPressed(control.moverIzquierda()))
         {
-            mover(-velocidad, 0);
+            mover(-velocidad);
             sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.moverDerecha()))
         {
-            mover(velocidad, 0);
+            mover(velocidad);
             sprite.setScale(1.f, 1.f);  // Restaurar orientación
             movio = true;
-        }
-
-        if (sf::Keyboard::isKeyPressed(control.moverArriba()))
-        {
-            mover(0, -velocidad);
-            movio = true;
-        }
-        if (sf::Keyboard::isKeyPressed(control.moverAbajo()))
-        {
-            mover(0, velocidad);
-            movio = true;
+            sprite.setPosition(sprite.getPosition().x, 654);
         }
 
         // Ataque
@@ -122,6 +120,18 @@ public:
         {
             filaActual = 0;  // ✅ Fila de idle/inactivo
         }
+         sprite.setPosition(sprite.getPosition().x, 654);
+         std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
+    }
+
+   sf::FloatRect getHitbox() const
+    {
+        return sf::FloatRect(
+            sprite.getPosition().x - 32, // Ajusta según el personaje
+            sprite.getPosition().y - 128,
+            64, // ancho del hitbox
+            128 // alto del hitbox
+        );
     }
 
     void takeDamage(int damage)
