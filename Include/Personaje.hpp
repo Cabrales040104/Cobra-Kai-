@@ -22,15 +22,19 @@ private:
     Vida healthBar;
     int score = 0;
 
+    bool puedeRecibirGolpe = true;     // <-- Controla si puede recibir daño
+    sf::Clock golpeClock;               // <-- Reloj para tiempo entre golpes
+    float tiempoEntreGolpes = 0.5f;    // 0.5 segundos de invulnerabilidad
+
 public:
     bool atacando = false;
     bool puedeAtacar = true;
-    bool defendiendo = false;  // <-- Nueva variable para defensa
+    bool defendiendo = false;  
 
     sf::Sprite sprite;
 
     Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
-        : control(control), healthBar(100, healthBarPosition)  // 100 de vida, 10 golpes de 10
+        : control(control), healthBar(100, healthBarPosition)
     {
        sf::Image img;
        if (!img.loadFromFile("assets/images/" + imagen)) {
@@ -67,6 +71,7 @@ public:
 
     void actualizar()
     {
+        // Animación simple
         if (clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
@@ -77,13 +82,18 @@ public:
             sprite.setPosition(sprite.getPosition().x, 654);
             clock.restart();
         }
+
+        // Controla tiempo para volver a poder recibir daño
+        if (!puedeRecibirGolpe && golpeClock.getElapsedTime().asSeconds() > tiempoEntreGolpes)
+        {
+            puedeRecibirGolpe = true;
+        }
     }
 
-    // Cambié este método para que controle defensa y ataque
     void leerTeclado(sf::Keyboard::Key teclaAtaque, sf::Keyboard::Key teclaDefensa)
     {
         bool movio = false;
-        defendiendo = false;  // reset defensa cada frame
+        defendiendo = false;
 
         if (sf::Keyboard::isKeyPressed(control.moverIzquierda()))
         {
@@ -99,17 +109,16 @@ public:
             sprite.setPosition(sprite.getPosition().x, 654);
         }
 
-        // Defensa: si está presionada la tecla de defensa
         if (sf::Keyboard::isKeyPressed(teclaDefensa))
         {
             defendiendo = true;
-            filaActual = 4; // Por ejemplo, fila 4 para animación de defensa
+            filaActual = 4; 
         }
         else if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar && !defendiendo)
         {
             atacando = true;
             puedeAtacar = false;
-            filaActual = 1;  // fila ataque
+            filaActual = 1;  
         }
 
         if (!sf::Keyboard::isKeyPressed(teclaAtaque))
@@ -120,15 +129,14 @@ public:
 
         if (movio && !atacando && !defendiendo)
         {
-            filaActual = 1;  // fila caminar
+            filaActual = 1;  
         }
         else if (!movio && !atacando && !defendiendo)
         {
-            filaActual = 0;  // idle
+            filaActual = 0;  
         }
 
         sprite.setPosition(sprite.getPosition().x, 654);
-        std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
     }
 
     sf::FloatRect getHitbox() const
@@ -143,10 +151,12 @@ public:
 
     void takeDamage(int damage)
     {
-        if (!defendiendo)  // solo resta vida si NO está defendiendo
+        if (!defendiendo && puedeRecibirGolpe)
         {
             healthBar.takeDamage(damage);
-            filaActual = 3; // fila daño
+            filaActual = 3; 
+            puedeRecibirGolpe = false;
+            golpeClock.restart();
         }
     }
 

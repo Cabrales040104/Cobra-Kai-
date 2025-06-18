@@ -28,7 +28,7 @@ int main()
         sf::Keyboard::Left,   // izquierda
         sf::Keyboard::N, // ataque (cambiado a Shift derecho)
         sf::Keyboard::M       // defensa
-    Control control2(
+    Control control2;
         sf::Keyboard::W,     // arriba
         sf::Keyboard::S,     // abajo
         sf::Keyboard::D,     // derecha
