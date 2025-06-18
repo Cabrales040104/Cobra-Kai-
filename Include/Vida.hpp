@@ -2,7 +2,7 @@
 static sf::Clock relojGolpe;
 float tiempoEntreGolpes = 0.5f; // medio segundo entre golpes
 float tiempo = relojGolpe.getElapsedTime().asSeconds();
-int daño = 10;
+int daño = 0.1;
 
 // Jugador 1 ataca
 if (control1.estaPresionada("jugador1", "ataque") && tiempo >= tiempoEntreGolpes)

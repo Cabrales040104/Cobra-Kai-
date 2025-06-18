@@ -13,11 +13,11 @@ private:
     float frameTime = 0.1f;
 
     int cuadroActual = 0;
-    int numFrames = 8;           // ✅ Hay 8 cuadros por fila
-    int frameWidth = 64;         // ✅ Ancho correcto del cuadro en el spritesheet
-    int frameHeight = 64;        // ✅ Alto correcto del cuadro en el spritesheet
+    int numFrames = 8;           
+    int frameWidth = 64;         
+    int frameHeight = 64;        
 
-    int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
+    int filaActual = 0;          
     Control control;
     Vida healthBar;
     int score = 0;
@@ -25,11 +25,12 @@ private:
 public:
     bool atacando = false;
     bool puedeAtacar = true;
+    bool defendiendo = false;  // <-- Nueva variable para defensa
 
     sf::Sprite sprite;
 
     Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
-        : control(control), healthBar(100, healthBarPosition)
+        : control(control), healthBar(100, healthBarPosition)  // 100 de vida, 10 golpes de 10
     {
        sf::Image img;
        if (!img.loadFromFile("assets/images/" + imagen)) {
@@ -66,7 +67,6 @@ public:
 
     void actualizar()
     {
-        // Animación simple: recorre los cuadros de la fila actual
         if (clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
@@ -79,65 +79,75 @@ public:
         }
     }
 
-    void leerTeclado(sf::Keyboard::Key teclaAtaque)
+    // Cambié este método para que controle defensa y ataque
+    void leerTeclado(sf::Keyboard::Key teclaAtaque, sf::Keyboard::Key teclaDefensa)
     {
         bool movio = false;
+        defendiendo = false;  // reset defensa cada frame
 
         if (sf::Keyboard::isKeyPressed(control.moverIzquierda()))
         {
             mover(-velocidad);
-            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
+            sprite.setScale(-1.f, 1.f);
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.moverDerecha()))
         {
             mover(velocidad);
-            sprite.setScale(1.f, 1.f);  // Restaurar orientación
+            sprite.setScale(1.f, 1.f);
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }
 
-        // Ataque
-        if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar)
+        // Defensa: si está presionada la tecla de defensa
+        if (sf::Keyboard::isKeyPressed(teclaDefensa))
+        {
+            defendiendo = true;
+            filaActual = 4; // Por ejemplo, fila 4 para animación de defensa
+        }
+        else if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar && !defendiendo)
         {
             atacando = true;
             puedeAtacar = false;
-            filaActual = 1;  // ✅ Puedes cambiar esto según la fila de animación de ataque
+            filaActual = 1;  // fila ataque
         }
 
-        // Permitir ataque nuevamente al soltar tecla
         if (!sf::Keyboard::isKeyPressed(teclaAtaque))
         {
             puedeAtacar = true;
+            atacando = false;
         }
 
-        // Si se está moviendo, usar fila de movimiento (opcional)
-        if (movio && !atacando)
+        if (movio && !atacando && !defendiendo)
         {
-            filaActual = 1;  // ✅ Suponiendo que la fila 1 es de caminar
+            filaActual = 1;  // fila caminar
         }
-        else if (!movio && !atacando)
+        else if (!movio && !atacando && !defendiendo)
         {
-            filaActual = 0;  // ✅ Fila de idle/inactivo
+            filaActual = 0;  // idle
         }
-         sprite.setPosition(sprite.getPosition().x, 654);
-         std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
+
+        sprite.setPosition(sprite.getPosition().x, 654);
+        std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
     }
 
-   sf::FloatRect getHitbox() const
+    sf::FloatRect getHitbox() const
     {
         return sf::FloatRect(
-            sprite.getPosition().x - 32, // Ajusta según el personaje
+            sprite.getPosition().x - 32,
             sprite.getPosition().y - 128,
-            64, // ancho del hitbox
-            128 // alto del hitbox
+            64,
+            128
         );
     }
 
     void takeDamage(int damage)
     {
-        healthBar.takeDamage(damage);
-        filaActual = 3; // ✅ Por ejemplo, fila 3 para daño
+        if (!defendiendo)  // solo resta vida si NO está defendiendo
+        {
+            healthBar.takeDamage(damage);
+            filaActual = 3; // fila daño
+        }
     }
 
     int getHealth() const
