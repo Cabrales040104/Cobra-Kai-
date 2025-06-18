@@ -13,11 +13,10 @@ private:
     float frameTime = 0.1f;
 
     int cuadroActual = 0;
-    int numFrames = 8;           // ✅ Hay 8 cuadros por fila
-    int frameWidth = 128;         // ✅ Ancho correcto del cuadro en el spritesheet
-    int frameHeight = 256;        // ✅ Alto correcto del cuadro en el spritesheet
-
-    int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
+    int numFrames = 8;
+    int frameWidth = 128;
+    int frameHeight = 256;
+    int filaActual = 0;
     Control control;
     Vida healthBar;
     int score = 0;
@@ -31,26 +30,31 @@ public:
     Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
         : control(control), healthBar(100, healthBarPosition)
     {
-       sf::Image img;
-       if (!img.loadFromFile("assets/images/" + imagen)) {
-          throw "No se pudo cargar la imagen: ";
+        sf::Image img;
+        if (!img.loadFromFile("assets/images/" + imagen))
+        {
+            throw "No se pudo cargar la imagen: ";
         }
         sf::Vector2u size = img.getSize();
-        for (unsigned int y = 0; y < size.y; ++y) {
-             for (unsigned int x = 0; x < size.x; ++x) {
-             sf::Color c = img.getPixel(x, y);
-             if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21) {
-                 img.setPixel(x, y, sf::Color(0, 0, 0, 0)); 
-             }
-         }
+        for (unsigned int y = 0; y < size.y; ++y)
+        {
+            for (unsigned int x = 0; x < size.x; ++x)
+            {
+                sf::Color c = img.getPixel(x, y);
+                if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21)
+                {
+                    img.setPixel(x, y, sf::Color(0, 0, 0, 0));
+                }
+            }
         }
-        if (!texture.loadFromImage(img)){
-           throw "No se pudo crear la textura";
+        if (!texture.loadFromImage(img))
+        {
+            throw "No se pudo crear la textura";
         }
         sprite.setTexture(texture);
         sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-        sprite.setOrigin(frameWidth / 2.f, frameHeight); 
-        sprite.setPosition(position.x, 654); 
+        sprite.setOrigin(frameWidth / 2.f, frameHeight);
+        sprite.setPosition(position.x, 654);
     }
 
     void mover(float offsetX)
@@ -92,7 +96,7 @@ public:
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(1.f, 1.f);  // Restaurar orientación
+            sprite.setScale(6.f, 6.f); // Restaurar orientación
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }
@@ -102,7 +106,7 @@ public:
         {
             atacando = true;
             puedeAtacar = false;
-            filaActual = 2;  // ✅ Puedes cambiar esto según la fila de animación de ataque
+            filaActual = 2;
         }
 
         // Permitir ataque nuevamente al soltar tecla
@@ -114,17 +118,17 @@ public:
         // Si se está moviendo, usar fila de movimiento (opcional)
         if (movio && !atacando)
         {
-            filaActual = 1;  // ✅ Suponiendo que la fila 1 es de caminar
+            filaActual = 1;
         }
         else if (!movio && !atacando)
         {
-            filaActual = 0;  // ✅ Fila de idle/inactivo
+            filaActual = 0;
         }
-         sprite.setPosition(sprite.getPosition().x, 654);
-         std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
+        sprite.setPosition(sprite.getPosition().x, 654);
+        std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
     }
 
-   sf::FloatRect getHitbox() const
+    sf::FloatRect getHitbox() const
     {
         return sf::FloatRect(
             sprite.getPosition().x - 32, // Ajusta según el personaje
@@ -137,7 +141,7 @@ public:
     void takeDamage(int damage)
     {
         healthBar.takeDamage(damage);
-        filaActual = 3; // ✅ Por ejemplo, fila 3 para daño
+        filaActual = 3;
     }
 
     int getHealth() const

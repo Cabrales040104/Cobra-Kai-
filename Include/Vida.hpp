@@ -1,7 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-class Vida {
+class Vida
+{
 private:
     int maxHealth;
     int currentHealth;
@@ -23,33 +24,41 @@ public:
         bar.setPosition(position);
     }
 
-    void takeDamage(int damage) {
+    void takeDamage(int damage)
+    {
         currentHealth -= damage;
-        if (currentHealth < 0) currentHealth = 0;
+        if (currentHealth < 0)
+            currentHealth = 0;
         updateBar();
     }
 
-    void heal(int amount) {
+    void heal(int amount)
+    {
         currentHealth += amount;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
         updateBar();
     }
 
-    int getCurrentHealth() const {
+    int getCurrentHealth() const
+    {
         return currentHealth;
     }
 
-    int getMaxHealth() const {
+    int getMaxHealth() const
+    {
         return maxHealth;
     }
 
-    void dibujar(sf::RenderWindow& window) {
+    void dibujar(sf::RenderWindow &window)
+    {
         window.draw(background);
         window.draw(bar);
     }
 
 private:
-    void updateBar() {
+    void updateBar()
+    {
         float healthPercent = static_cast<float>(currentHealth) / maxHealth;
         bar.setSize(sf::Vector2f(size.x * healthPercent, size.y));
         if (healthPercent > 0.5f)
