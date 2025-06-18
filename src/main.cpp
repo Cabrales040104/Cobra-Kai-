@@ -22,15 +22,19 @@ int main()
 
     // Controladores y personajes como antes
     Control control1;
+        sf::Keyboard::Up,     // arriba
+        sf::Keyboard::Down,   // abajo
+        sf::Keyboard::Right,  // derecha
+        sf::Keyboard::Left,   // izquierda
+        sf::Keyboard::N, // ataque (cambiado a Shift derecho)
+        sf::Keyboard::M       // defensa
     Control control2(
         sf::Keyboard::W,     // arriba
         sf::Keyboard::S,     // abajo
         sf::Keyboard::D,     // derecha
         sf::Keyboard::A,     // izquierda
-        sf::Keyboard::J,     // ataque
-        sf::Keyboard::K,     // defensa
-        sf::Keyboard::L,     // salto
-        sf::Keyboard::U      // especial
+        sf::Keyboard::F,     // ataque
+        sf::Keyboard::G      // defensa   
     );
    const int alturaVentana = 654; // Altura de la ventana del juego
     const float posYPersonaje = alturaVentana - 10; // Posición Y del personaje (10 px sobre el suelo)

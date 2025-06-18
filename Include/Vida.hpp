@@ -1,48 +1,35 @@
-#pragma once
-#include <SFML/Graphics.hpp>
-#include <string>
+// Lógica de ataque y defensa para ambos personajes
+static sf::Clock relojGolpe;
+float tiempoEntreGolpes = 0.5f; // medio segundo entre golpes
+float tiempo = relojGolpe.getElapsedTime().asSeconds();
+int daño = 10;
 
-class Vida
+// Jugador 1 ataca
+if (control1.estaPresionada("jugador1", "ataque") && tiempo >= tiempoEntreGolpes)
 {
-private:
-  int maxHealth;
-  int currentHealth;
-  sf::Font font;
-  sf::Text healthText;
-  sf::Vector2f position;
-
-public:
-  Vida(int maxHealth, sf::Vector2f position)
-      : maxHealth(maxHealth), currentHealth(maxHealth), position(position)
-  {
-    if (!font.loadFromFile("./assets/fonts/Dead Stock.ttf"))
+    if (!control2.estaPresionada("jugador2", "defensa"))
     {
-      throw std::runtime_error("No se pudo cargar la fuente");
+        Johnn.restarVida(daño); // le quita 10 de vida
+        std::cout << "Jugador 1 golpea → Vida jugador 2: " << Johnn.getHealth() << std::endl;
     }
-    healthText.setFont(font);
-    healthText.setCharacterSize(24);
-    healthText.setFillColor(sf::Color::Green);
-    healthText.setPosition(position);
-    healthText.setString(std::to_string(currentHealth) + "/" + std::to_string(maxHealth));
-  }
+    else
+    {
+        std::cout << "Jugador 2 se defendió del ataque de Jugador 1" << std::endl;
+    }
+    relojGolpe.restart();
+}
 
-  void takeDamage(int damage)
-  {
-    currentHealth -= damage;
-    if (currentHealth < 0)
-      currentHealth = 0;
-    healthText.setString(std::to_string(currentHealth) + "/" + std::to_string(maxHealth));
-  }
-
-  void dibujar(sf::RenderWindow &window)
-  {
-    sf::RectangleShape healthBar(sf::Vector2f(static_cast<float>(currentHealth) / maxHealth * 100, 10));
-    healthBar.setFillColor(sf::Color::Red);
-    healthBar.setPosition(position);
-
-    window.draw(healthBar);
-    window.draw(healthText);
-  }
-
-  int getCurrentHealth() const { return currentHealth; }
-};
+// Jugador 2 ataca
+if (control2.estaPresionada("jugador2", "ataque") && tiempo >= tiempoEntreGolpes)
+{
+    if (!control1.estaPresionada("jugador1", "defensa"))
+    {
+        Dan.restarVida(daño); // le quita 10 de vida
+        std::cout << "Jugador 2 golpea → Vida jugador 1: " << Dan.getHealth() << std::endl;
+    }
+    else
+    {
+        std::cout << "Jugador 1 se defendió del ataque de Jugador 2" << std::endl;
+    }
+    relojGolpe.restart();
+}
