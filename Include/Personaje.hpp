@@ -1,172 +1,62 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <Control.hpp>
-#include <Vida.hpp>
-#include <iostream>
 
-class Personaje
-{
+class Vida {
 private:
-    double velocidad = 0.1;
-    sf::Texture texture;
-    sf::Clock clock;
-    float frameTime = 0.1f;
-
-    int cuadroActual = 0;
-    int numFrames = 8;           
-    int frameWidth = 64;         
-    int frameHeight = 64;        
-
-    int filaActual = 0;          
-    Control control;
-    Vida healthBar;
-    int score = 0;
-
-    bool puedeRecibirGolpe = true;     // <-- Controla si puede recibir daño
-    sf::Clock golpeClock;               // <-- Reloj para tiempo entre golpes
-    float tiempoEntreGolpes = 0.5f;    // 0.5 segundos de invulnerabilidad
+    int maxHealth;
+    int currentHealth;
+    sf::Vector2f position;
+    sf::Vector2f size;
+    sf::RectangleShape background;
+    sf::RectangleShape bar;
 
 public:
-    bool atacando = false;
-    bool puedeAtacar = true;
-    bool defendiendo = false;  
-
-    sf::Sprite sprite;
-
-    Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
-        : control(control), healthBar(100, healthBarPosition)
+    Vida(int maxHealth, sf::Vector2f position, sf::Vector2f size = sf::Vector2f(150, 20))
+        : maxHealth(maxHealth), currentHealth(maxHealth), position(position), size(size)
     {
-       sf::Image img;
-       if (!img.loadFromFile("assets/images/" + imagen)) {
-          throw "No se pudo cargar la imagen: ";
-        }
-        sf::Vector2u size = img.getSize();
-        for (unsigned int y = 0; y < size.y; ++y) {
-             for (unsigned int x = 0; x < size.x; ++x) {
-             sf::Color c = img.getPixel(x, y);
-             if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21) {
-                 img.setPixel(x, y, sf::Color(0, 0, 0, 0)); 
-             }
-         }
-        }
-        if (!texture.loadFromImage(img)){
-           throw "No se pudo crear la textura";
-        }
-        sprite.setTexture(texture);
-        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-        sprite.setOrigin(frameWidth / 2.f, frameHeight); 
-        sprite.setPosition(position.x, 654); 
+        background.setSize(size);
+        background.setFillColor(sf::Color(50, 50, 50));
+        background.setPosition(position);
+
+        bar.setSize(size);
+        bar.setFillColor(sf::Color::Green);
+        bar.setPosition(position);
     }
 
-    void mover(float offsetX)
-    {
-        sprite.move(offsetX, 0);
+    void takeDamage(int damage) {
+        currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+        updateBar();
     }
 
-    void dibujar(sf::RenderWindow &window)
-    {
-        window.draw(sprite);
-        healthBar.dibujar(window);
+    void heal(int amount) {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        updateBar();
     }
 
-    void actualizar()
-    {
-        // Animación simple
-        if (clock.getElapsedTime().asSeconds() >= frameTime)
-        {
-            cuadroActual = (cuadroActual + 1) % numFrames;
-            int left = cuadroActual * frameWidth;
-            int top = filaActual * frameHeight;
-
-            sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
-            sprite.setPosition(sprite.getPosition().x, 654);
-            clock.restart();
-        }
-
-        // Controla tiempo para volver a poder recibir daño
-        if (!puedeRecibirGolpe && golpeClock.getElapsedTime().asSeconds() > tiempoEntreGolpes)
-        {
-            puedeRecibirGolpe = true;
-        }
+    int getCurrentHealth() const {
+        return currentHealth;
     }
 
-    void leerTeclado(sf::Keyboard::Key teclaAtaque, sf::Keyboard::Key teclaDefensa)
-    {
-        bool movio = false;
-        defendiendo = false;
-
-        if (sf::Keyboard::isKeyPressed(control.moverIzquierda()))
-        {
-            mover(-velocidad);
-            sprite.setScale(-1.f, 1.f);
-            movio = true;
-        }
-        else if (sf::Keyboard::isKeyPressed(control.moverDerecha()))
-        {
-            mover(velocidad);
-            sprite.setScale(1.f, 1.f);
-            movio = true;
-            sprite.setPosition(sprite.getPosition().x, 654);
-        }
-
-        if (sf::Keyboard::isKeyPressed(teclaDefensa))
-        {
-            defendiendo = true;
-            filaActual = 4; 
-        }
-        else if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar && !defendiendo)
-        {
-            atacando = true;
-            puedeAtacar = false;
-            filaActual = 1;  
-        }
-
-        if (!sf::Keyboard::isKeyPressed(teclaAtaque))
-        {
-            puedeAtacar = true;
-            atacando = false;
-        }
-
-        if (movio && !atacando && !defendiendo)
-        {
-            filaActual = 1;  
-        }
-        else if (!movio && !atacando && !defendiendo)
-        {
-            filaActual = 0;  
-        }
-
-        sprite.setPosition(sprite.getPosition().x, 654);
+    int getMaxHealth() const {
+        return maxHealth;
     }
 
-    sf::FloatRect getHitbox() const
-    {
-        return sf::FloatRect(
-            sprite.getPosition().x - 32,
-            sprite.getPosition().y - 128,
-            64,
-            128
-        );
+    void dibujar(sf::RenderWindow& window) {
+        window.draw(background);
+        window.draw(bar);
     }
 
-    void takeDamage(int damage)
-    {
-        if (!defendiendo && puedeRecibirGolpe)
-        {
-            healthBar.takeDamage(damage);
-            filaActual = 3; 
-            puedeRecibirGolpe = false;
-            golpeClock.restart();
-        }
-    }
-
-    int getHealth() const
-    {
-        return healthBar.getCurrentHealth();
-    }
-
-    sf::FloatRect getBounds() const
-    {
-        return sprite.getGlobalBounds();
+private:
+    void updateBar() {
+        float healthPercent = static_cast<float>(currentHealth) / maxHealth;
+        bar.setSize(sf::Vector2f(size.x * healthPercent, size.y));
+        if (healthPercent > 0.5f)
+            bar.setFillColor(sf::Color::Green);
+        else if (healthPercent > 0.2f)
+            bar.setFillColor(sf::Color::Yellow);
+        else
+            bar.setFillColor(sf::Color::Red);
     }
 };

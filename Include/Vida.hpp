@@ -1,35 +1,62 @@
-// Lógica de ataque y defensa para ambos personajes
-static sf::Clock relojGolpe;
-float tiempoEntreGolpes = 0.5f; // medio segundo entre golpes
-float tiempo = relojGolpe.getElapsedTime().asSeconds();
-int daño = 0.1;
+#pragma once
+#include <SFML/Graphics.hpp>
 
-// Jugador 1 ataca
-if (control1.estaPresionada("jugador1", "ataque") && tiempo >= tiempoEntreGolpes)
-{
-    if (!control2.estaPresionada("jugador2", "defensa"))
-    {
-        Johnn.restarVida(daño); // le quita 10 de vida
-        std::cout << "Jugador 1 golpea → Vida jugador 2: " << Johnn.getHealth() << std::endl;
-    }
-    else
-    {
-        std::cout << "Jugador 2 se defendió del ataque de Jugador 1" << std::endl;
-    }
-    relojGolpe.restart();
-}
+class Vida {
+private:
+    int maxHealth;
+    int currentHealth;
+    sf::Vector2f position;
+    sf::Vector2f size;
+    sf::RectangleShape background;
+    sf::RectangleShape bar;
 
-// Jugador 2 ataca
-if (control2.estaPresionada("jugador2", "ataque") && tiempo >= tiempoEntreGolpes)
-{
-    if (!control1.estaPresionada("jugador1", "defensa"))
+public:
+    Vida(int maxHealth, sf::Vector2f position, sf::Vector2f size = sf::Vector2f(150, 20))
+        : maxHealth(maxHealth), currentHealth(maxHealth), position(position), size(size)
     {
-        Dan.restarVida(daño); // le quita 10 de vida
-        std::cout << "Jugador 2 golpea → Vida jugador 1: " << Dan.getHealth() << std::endl;
+        background.setSize(size);
+        background.setFillColor(sf::Color(50, 50, 50));
+        background.setPosition(position);
+
+        bar.setSize(size);
+        bar.setFillColor(sf::Color::Green);
+        bar.setPosition(position);
     }
-    else
-    {
-        std::cout << "Jugador 1 se defendió del ataque de Jugador 2" << std::endl;
+
+    void takeDamage(int damage) {
+        currentHealth -= damage;
+        if (currentHealth < 0) currentHealth = 0;
+        updateBar();
     }
-    relojGolpe.restart();
-}
+
+    void heal(int amount) {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        updateBar();
+    }
+
+    int getCurrentHealth() const {
+        return currentHealth;
+    }
+
+    int getMaxHealth() const {
+        return maxHealth;
+    }
+
+    void dibujar(sf::RenderWindow& window) {
+        window.draw(background);
+        window.draw(bar);
+    }
+
+private:
+    void updateBar() {
+        float healthPercent = static_cast<float>(currentHealth) / maxHealth;
+        bar.setSize(sf::Vector2f(size.x * healthPercent, size.y));
+        if (healthPercent > 0.5f)
+            bar.setFillColor(sf::Color::Green);
+        else if (healthPercent > 0.2f)
+            bar.setFillColor(sf::Color::Yellow);
+        else
+            bar.setFillColor(sf::Color::Red);
+    }
+};
