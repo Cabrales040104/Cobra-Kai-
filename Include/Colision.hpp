@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <Personaje.hpp>
 
+
 class Colision
 {
 public:

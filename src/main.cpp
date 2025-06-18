@@ -21,14 +21,15 @@ int main()
     Campo campo("1.png");
 
     // Controladores y personajes como antes
-    Control control1;
+    Control control1(
         sf::Keyboard::Up,     // arriba
         sf::Keyboard::Down,   // abajo
         sf::Keyboard::Right,  // derecha
         sf::Keyboard::Left,   // izquierda
         sf::Keyboard::N, // ataque (cambiado a Shift derecho)
         sf::Keyboard::M       // defensa
-    Control control2;
+    );
+    Control control2(
         sf::Keyboard::W,     // arriba
         sf::Keyboard::S,     // abajo
         sf::Keyboard::D,     // derecha
@@ -83,7 +84,7 @@ int main()
                 window.close();
         }
 
-        Dan.leerTeclado(sf::Keyboard::K);
+        Dan.leerTeclado(sf::Keyboard::N);
         Johnn.leerTeclado(sf::Keyboard::F);
 
         Dan.actualizar();
