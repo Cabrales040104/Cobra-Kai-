@@ -14,8 +14,8 @@ private:
 
     int cuadroActual = 0;
     int numFrames = 8;           // ✅ Hay 8 cuadros por fila
-    int frameWidth = 128;         // ✅ Ancho correcto del cuadro en el spritesheet
-    int frameHeight = 256;        // ✅ Alto correcto del cuadro en el spritesheet
+    int frameWidth = 64;         // ✅ Ancho correcto del cuadro en el spritesheet
+    int frameHeight = 64;        // ✅ Alto correcto del cuadro en el spritesheet
 
     int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
     Control control;
@@ -102,7 +102,7 @@ public:
         {
             atacando = true;
             puedeAtacar = false;
-            filaActual = 2;  // ✅ Puedes cambiar esto según la fila de animación de ataque
+            filaActual = 1;  // ✅ Puedes cambiar esto según la fila de animación de ataque
         }
 
         // Permitir ataque nuevamente al soltar tecla
