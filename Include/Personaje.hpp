@@ -1,63 +1,152 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Vida.hpp"
+#include <Control.hpp>
+#include <Vida.hpp>
+#include <iostream>
 
-class Vida {
+class Personaje
+{
 private:
-    int maxHealth;
-    int currentHealth;
-    sf::Vector2f position;
-    sf::Vector2f size;
-    sf::RectangleShape background;
-    sf::RectangleShape bar;
+    double velocidad = 0.1;
+    sf::Texture texture;
+    sf::Clock clock;
+    float frameTime = 0.1f;
+
+    int cuadroActual = 0;
+    int numFrames = 8;           // ✅ Hay 8 cuadros por fila
+    int frameWidth = 128;         // ✅ Ancho correcto del cuadro en el spritesheet
+    int frameHeight = 256;        // ✅ Alto correcto del cuadro en el spritesheet
+
+    int filaActual = 0;          // Fila actual del spritesheet (cambiar según animación)
+    Control control;
+    Vida healthBar;
+    int score = 0;
 
 public:
-    Vida(int maxHealth, sf::Vector2f position, sf::Vector2f size = sf::Vector2f(150, 20))
-        : maxHealth(maxHealth), currentHealth(maxHealth), position(position), size(size)
+    bool atacando = false;
+    bool puedeAtacar = true;
+
+    sf::Sprite sprite;
+
+    Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
+        : control(control), healthBar(100, healthBarPosition)
     {
-        background.setSize(size);
-        background.setFillColor(sf::Color(50, 50, 50));
-        background.setPosition(position);
-
-        bar.setSize(size);
-        bar.setFillColor(sf::Color::Green);
-        bar.setPosition(position);
+       sf::Image img;
+       if (!img.loadFromFile("assets/images/" + imagen)) {
+          throw "No se pudo cargar la imagen: ";
+        }
+        sf::Vector2u size = img.getSize();
+        for (unsigned int y = 0; y < size.y; ++y) {
+             for (unsigned int x = 0; x < size.x; ++x) {
+             sf::Color c = img.getPixel(x, y);
+             if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21) {
+                 img.setPixel(x, y, sf::Color(0, 0, 0, 0)); 
+             }
+         }
+        }
+        if (!texture.loadFromImage(img)){
+           throw "No se pudo crear la textura";
+        }
+        sprite.setTexture(texture);
+        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
+        sprite.setOrigin(frameWidth / 2.f, frameHeight); 
+        sprite.setPosition(position.x, 654); 
     }
 
-    void takeDamage(int damage) {
-        currentHealth -= damage;
-        if (currentHealth < 0) currentHealth = 0;
-        updateBar();
+    void mover(float offsetX)
+    {
+        sprite.move(offsetX, 0);
     }
 
-    void heal(int amount) {
-        currentHealth += amount;
-        if (currentHealth > maxHealth) currentHealth = maxHealth;
-        updateBar();
+    void dibujar(sf::RenderWindow &window)
+    {
+        window.draw(sprite);
+        healthBar.dibujar(window);
     }
 
-    int getCurrentHealth() const {
-        return currentHealth;
+    void actualizar()
+    {
+        // Animación simple: recorre los cuadros de la fila actual
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            cuadroActual = (cuadroActual + 1) % numFrames;
+            int left = cuadroActual * frameWidth;
+            int top = filaActual * frameHeight;
+
+            sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+            sprite.setPosition(sprite.getPosition().x, 654);
+            clock.restart();
+        }
     }
 
-    int getMaxHealth() const {
-        return maxHealth;
+    void leerTeclado(sf::Keyboard::Key teclaAtaque)
+    {
+        bool movio = false;
+
+        if (sf::Keyboard::isKeyPressed(control.izquierda))
+        {
+            mover(-velocidad);
+            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
+            movio = true;
+        }
+        else if (sf::Keyboard::isKeyPressed(control.derecha))
+        {
+            mover(velocidad);
+            sprite.setScale(1.f, 1.f);  // Restaurar orientación
+            movio = true;
+            sprite.setPosition(sprite.getPosition().x, 654);
+        }
+
+        // Ataque
+        if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar)
+        {
+            atacando = true;
+            puedeAtacar = false;
+            filaActual = 2;  // ✅ Puedes cambiar esto según la fila de animación de ataque
+        }
+
+        // Permitir ataque nuevamente al soltar tecla
+        if (!sf::Keyboard::isKeyPressed(teclaAtaque))
+        {
+            puedeAtacar = true;
+        }
+
+        // Si se está moviendo, usar fila de movimiento (opcional)
+        if (movio && !atacando)
+        {
+            filaActual = 1;  // ✅ Suponiendo que la fila 1 es de caminar
+        }
+        else if (!movio && !atacando)
+        {
+            filaActual = 0;  // ✅ Fila de idle/inactivo
+        }
+         sprite.setPosition(sprite.getPosition().x, 654);
+         std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
     }
 
-    void dibujar(sf::RenderWindow& window) {
-        window.draw(background);
-        window.draw(bar);
+   sf::FloatRect getHitbox() const
+    {
+        return sf::FloatRect(
+            sprite.getPosition().x - 32, // Ajusta según el personaje
+            sprite.getPosition().y - 128,
+            64, // ancho del hitbox
+            128 // alto del hitbox
+        );
     }
 
-private:
-    void updateBar() {
-        float healthPercent = static_cast<float>(currentHealth) / maxHealth;
-        bar.setSize(sf::Vector2f(size.x * healthPercent, size.y));
-        if (healthPercent > 0.5f)
-            bar.setFillColor(sf::Color::Green);
-        else if (healthPercent > 0.2f)
-            bar.setFillColor(sf::Color::Yellow);
-        else
-            bar.setFillColor(sf::Color::Red);
+    void takeDamage(int damage)
+    {
+        healthBar.takeDamage(damage);
+        filaActual = 3; // ✅ Por ejemplo, fila 3 para daño
+    }
+
+    int getHealth() const
+    {
+        return healthBar.getCurrentHealth();
+    }
+
+    sf::FloatRect getBounds() const
+    {
+        return sprite.getGlobalBounds();
     }
 };
