@@ -14,7 +14,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(960, 654), "Cobra Kai", sf::Style::Close | sf::Style::Titlebar);
 
     sf::Music musicaFondo;
-    if (!musicaFondo.openFromFile("assets/sounds/AudioKarate.mp3"))
+    if (!musicaFondo.openFromFile("assets/sounds/AudioRocky.mp3"))
     {
         throw std::runtime_error("No se pudo cargar la música de fondo");
     }

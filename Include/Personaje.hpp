@@ -7,41 +7,39 @@
 class Personaje
 {
 private:
-    double velocidad = 0.3;
+    float velocidad = 0.01f;
     sf::Texture textura;
     sf::Clock clock;
-    float frameTime = 0.3f;
+    float frameTime = 0.1f;
 
     int cuadroActual = 0;
     int numFrames = 8;
     int frameWidth = 128;
-    int frameHeight = 384; // Asegúrate que esto sea la altura real de tu sprite
+    int frameHeight = 256;
     int filaActual = 0;
     Control control;
     Vida healthBar;
     int score = 0;
 
 public:
-    float escalaBase = 0.7f; // Escala ajustable
+    sf::Sprite sprite;
+    float escalaBase = 0.7f;
     bool atacando = false;
     bool puedeAtacar = true;
-
-    sf::Sprite sprite;
 
     Personaje(sf::Vector2f position, std::string imagen, Control control, sf::Vector2f healthBarPosition)
         : control(control), healthBar(100, healthBarPosition)
     {
+
         sf::Image img;
         if (!img.loadFromFile("assets/images/" + imagen))
         {
-            throw "No se pudo cargar la imagen";
+            throw std::runtime_error("No se pudo cargar la imagen: " + imagen);
         }
 
-        // Hacer transparente un color específico
-        sf::Vector2u size = img.getSize();
-        for (unsigned int y = 0; y < size.y; ++y)
+        for (unsigned int y = 0; y < img.getSize().y; ++y)
         {
-            for (unsigned int x = 0; x < size.x; ++x)
+            for (unsigned int x = 0; x < img.getSize().x; ++x)
             {
                 sf::Color c = img.getPixel(x, y);
                 if (abs(int(c.r) - 178) < 21 && abs(int(c.g) - 255) < 21 && abs(int(c.b) - 178) < 21)
@@ -53,14 +51,16 @@ public:
 
         if (!textura.loadFromImage(img))
         {
-            throw "No se pudo crear la textura";
+            throw std::runtime_error("No se pudo crear la textura");
         }
 
         sprite.setTexture(textura);
         sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-        sprite.setOrigin(frameWidth / 2.f, frameHeight); // origen desde el centro abajo
+
+        sprite.setOrigin(frameWidth / 2.f, frameHeight);
+
         sprite.setScale(escalaBase, escalaBase);
-        sprite.setPosition(position.x, 654); // alineado con el piso
+        sprite.setPosition(position);
     }
 
     void mover(float offsetX)
@@ -68,37 +68,10 @@ public:
         sprite.move(offsetX, 0);
     }
 
-    void dibujar(sf::RenderWindow &window)
-    {
-        window.draw(sprite);
-        healthBar.dibujar(window);
-    }
-
-    void actualizar()
-    {
-        if (clock.getElapsedTime().asSeconds() >= frameTime)
-        {
-            cuadroActual = (cuadroActual + 1) % numFrames;
-            int left = cuadroActual * frameWidth;
-            int top = filaActual * frameHeight;
-
-            if (sprite.getScale().x < 0)
-            {
-                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));
-            }
-            else
-            {
-                sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
-            }
-
-            clock.restart();
-        }
-    }
-
     void aplicarEscala(bool mirandoIzquierda)
     {
-        float escala = escalaBase;
-        sprite.setScale(mirandoIzquierda ? -escala : escala, escala);
+        float escalaX = mirandoIzquierda ? -escalaBase : escalaBase;
+        sprite.setScale(escalaX, escalaBase);
     }
 
     void leerTeclado(sf::Keyboard::Key teclaAtaque)
@@ -131,22 +104,32 @@ public:
         }
 
         if (movio && !atacando)
-        {
             filaActual = 1;
-        }
         else if (!movio && !atacando)
-        {
             filaActual = 0;
+    }
+
+    void actualizar()
+    {
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        {
+            cuadroActual = (cuadroActual + 1) % numFrames;
+            int left = cuadroActual * frameWidth;
+            int top = filaActual * frameHeight;
+
+            if (sprite.getScale().x < 0)
+                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));
+            else
+                sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+
+            clock.restart();
         }
     }
 
-    sf::FloatRect getHitbox() const
+    void dibujar(sf::RenderWindow &window)
     {
-        return sf::FloatRect(
-            sprite.getPosition().x - 64,
-            sprite.getPosition().y - frameHeight,
-            64,
-            frameHeight);
+        window.draw(sprite);
+        healthBar.dibujar(window);
     }
 
     void takeDamage(int damage)
@@ -161,6 +144,11 @@ public:
     }
 
     sf::FloatRect getBounds() const
+    {
+        return sprite.getGlobalBounds();
+    }
+
+    sf::FloatRect getHitbox() const
     {
         return sprite.getGlobalBounds();
     }
