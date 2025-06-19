@@ -65,7 +65,7 @@ public:
     void mover(float offsetX)
     {
         sprite.move(offsetX, 0);
-    }
+    };
 
     void dibujar(sf::RenderWindow &window)
     {
@@ -75,16 +75,29 @@ public:
 
     void actualizar()
     {
-        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        if(clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
             int left = cuadroActual * frameWidth;
             int top = filaActual * frameHeight;
 
-            sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
-            sprite.setPosition(sprite.getPosition().x, 900);
+            if (sprite.getScale().x < 0)
+            {
+                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));  
+            }
+            else
+            {
+                sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+            }
+
+            sprite.setPosition(sprite.getPosition().x, 654);
             clock.restart();
         }
+    }
+
+    void aplicarEscala(bool mirandoIzquierda)
+    {
+        sprite.setScale(mirandoIzquierda ? -0.1f : 0.1f, 0.1f);
     }
 
     void leerTeclado(sf::Keyboard::Key teclaAtaque)
@@ -94,13 +107,13 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-escalaBase, escalaBase); // Voltear a la izquierda
+            aplicarEscala(true);
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(escalaBase, escalaBase); // Derecha
+            aplicarEscala(false);
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 900);
         }
