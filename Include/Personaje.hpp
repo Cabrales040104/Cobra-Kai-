@@ -56,7 +56,7 @@ public:
         sf::FloatRect bounds = sprite.getLocalBounds();
         sprite.setOrigin(bounds.width / 2, bounds.height / 2);
         sprite.setPosition(position.x, 654);
-        sprite.setScale(1.f, 1.f); // Escala base
+        sprite.setScale(0.1f, 0.1f); // Escala base
     }
 
     void mover(float offsetX)
@@ -91,13 +91,13 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
+            sprite.setScale(-0.1f, 0.1f); // Voltear sprite horizontalmente
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(1.f, 1.f); // Restaurar orientación
+            sprite.setScale(0.1f, 0.1f); // Restaurar orientación
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }

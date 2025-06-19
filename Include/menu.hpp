@@ -81,7 +81,7 @@ public:
         }
         else
         {
-            sprite.setScale(1.f, 1.f); // Escala por defecto si no se proporciona tamaño de ventana
+            sprite.setScale(0.1f, 0.1f); // Escala por defecto si no se proporciona tamaño de ventana
         }
     }
 

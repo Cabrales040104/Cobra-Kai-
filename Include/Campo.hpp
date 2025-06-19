@@ -20,7 +20,7 @@ public:
         sprite_.setTexture(textura_);
         sprite_.setOrigin(0, 0);
         sprite_.setPosition(0, 0);
-        sprite_.setScale(1.f, 1.f);
+        sprite_.setScale(0.1f, 0.1f);
     }
 
     void dibujar(sf::RenderWindow &w) const { w.draw(sprite_); }
@@ -45,7 +45,7 @@ public:
         }
         else
         {
-            sprite_.setScale(1.f, 1.f);
+            sprite_.setScale(0.1f, 0.1f);
         }
     }
 };
