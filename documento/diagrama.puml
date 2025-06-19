@@ -5,110 +5,64 @@ class Control
 class Personaje
 class Colision
 class Sonido
-class Partida
-class Elemento
 class Vida
-class HUD
-class Escena
-class Enemigo
-class Jugador
 
 class Menu {
-  +Dibujar(window: sf::RenderWindow): void
+  +Dibujar(Window: sf::RenderWindow): void
   +Actualizar(): void
   +ObtenerFont(): sf::Font&
   +MostrarOpciones(): void
-  +SeleccionarOpcion(opcion: int): void
+  +SeleccionarOpcion(Opcion: int): void
 }
 
 class Campo {
-  +Dibujar(window: sf::RenderWindow): void
-  +CargarFondo(nombre: string): void
+  +Dibujar(Window: sf::RenderWindow): void
+  +CargarFondo(Nombre: string): void
   +Actualizar(): void
 }
 
 class Control {
-  +LeerTeclado(tecla: sf::Keyboard::Key): void
+  +LeerTeclado(Tecla: sf::Keyboard::Key): void
   +ConfigurarTeclas(): void
 }
 
 class Personaje {
-  +Dibujar(window: sf::RenderWindow): void
+  +Dibujar(Window: sf::RenderWindow): void
   +Actualizar(): void
-  +ObtenerSalud(): int
-  +Atacar(objetivo: Personaje): void
+  +MoverDerecha(): void
+  +MoverIzquierda(): void
+  +Atacar(): void
   +Defender(): void
-  +Saltar(): void
-  +UsarEspecial(): void
-  +RecibirDano(cantidad: int): void
+  +RecibirDano(Cantidad: int): void
 }
 
 class Colision {
-  +Manejar(p1: Personaje, p2: Personaje): void
-  +Detectar(p1: Personaje, p2: Personaje): bool
+  +Manejar(P1: Personaje, P2: Personaje): void
+  +Detectar(P1: Personaje, P2: Personaje): bool
 }
 
 class Vida {
   +Actualizar(): void
-  +Mostrar(window: sf::RenderWindow): void
-  +Restaurar(): void
-  +Reducir(cantidad: int): void
+  +Mostrar(Window: sf::RenderWindow): void
+  +Reducir(Cantidad: int): void
 }
 
 class Sonido {
-  +Reproducir(nombre: string): void
+  +Reproducir(Nombre: string): void
   +Detener(): void
   +Pausar(): void
 }
 
-class Partida {
-  +Iniciar(): void
-  +Pausar(): void
-  +Terminar(): void
-  +Guardar(): void
-  +Cargar(): void
-}
-
-class Elemento {
-  +FormarParteDelJuego(): Bool
-}
-
-class HUD {
-  +Dibujar(window: sf::RenderWindow): void
-  +Actualizar(): void
-}
-
-class Escena {
-  +Cargar(): void
-  +Dibujar(window: sf::RenderWindow): void
-  +Actualizar(): void
-}
-
-class Enemigo {
-  +Dibujar(window: sf::RenderWindow): void
-  +Actualizar(): void
-  +Atacar(objetivo: Personaje): void
-}
-
-class Jugador {
-  +Dibujar(window: sf::RenderWindow): void
-  +Actualizar(): void
-  +UsarEspecial(): void
-}
-
-Menu "1" o-- "1" Campo
-Menu "1" o-- "1" Sonido
-Personaje "1" o-- "1" Control
-Personaje "1" o-- "1" Vida
-Personaje "1" o-- "*" Sonido
+Menu o-- Campo
+Menu o-- Sonido
+Personaje o-- Sonido
+Personaje *-- Control
+Personaje *-- Vida
 Colision --|> Personaje
 Campo --|> sf::RenderWindow
 Menu --|> sf::RenderWindow
 Vida --|> sf::RenderWindow
 Personaje --|> sf::RenderWindow
-Partida "1" o-- "*" Personaje
-Partida "1" o-- "1" Campo
-Partida "1" o-- "1" Menu
 Menu --|> Elemento
 Campo --|> Elemento
 Control --|> Elemento
@@ -116,9 +70,4 @@ Personaje --|> Elemento
 Colision --|> Elemento
 Vida --|> Elemento
 Sonido --|> Elemento
-Partida --|> Elemento
-HUD --|> Elemento
-Escena --|> Elemento
-Enemigo --|> Personaje
-Jugador --|> Personaje
 @enduml
