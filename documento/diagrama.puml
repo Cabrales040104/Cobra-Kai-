@@ -53,12 +53,11 @@ class Sonido {
   +Pausar(): void
 }
 
-Menu o-- Campo
-Menu o-- Sonido
-Personaje o-- Sonido
-Personaje *-- Control
-Personaje *-- Vida
-Colision --|> Personaje
+Menu "1" o-- "1" Campo
+Menu "1" o-- "1" Sonido
+Personaje "1" *-- "1" Control
+Personaje "1" *-- "1" Vida
+Personaje "1" *-- "*" Sonido
 Campo --|> sf::RenderWindow
 Menu --|> sf::RenderWindow
 Vida --|> sf::RenderWindow
