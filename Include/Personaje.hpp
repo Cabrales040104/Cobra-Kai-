@@ -72,13 +72,21 @@ public:
 
     void actualizar()
     {
-        if (clock.getElapsedTime().asSeconds() >= frameTime)
+        if(clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
             int left = cuadroActual * frameWidth;
             int top = filaActual * frameHeight;
 
-            sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+            if (sprite.getScale().x < 0)
+            {
+                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));  
+            }
+            else
+            {
+                sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
+            }
+
             sprite.setPosition(sprite.getPosition().x, 654);
             clock.restart();
         }
@@ -96,7 +104,7 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            aplicarEscala(false);
+            aplicarEscala(true);
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
