@@ -62,7 +62,7 @@ public:
     void mover(float offsetX)
     {
         sprite.move(offsetX, 0);
-    }
+    };
 
     void dibujar(sf::RenderWindow &window)
     {
@@ -84,6 +84,11 @@ public:
         }
     }
 
+    void aplicarEscala(bool mirandoIzquierda)
+    {
+        sprite.setScale(mirandoIzquierda ? -0.1f : 0.1f, 0.1f);
+    }
+
     void leerTeclado(sf::Keyboard::Key teclaAtaque)
     {
         bool movio = false;
@@ -91,13 +96,13 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-0.1f, 0.1f); // Voltear sprite horizontalmente
+            aplicarEscala(false);
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(0.1f, 0.1f); // Restaurar orientación
+            aplicarEscala(false);
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }
