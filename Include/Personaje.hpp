@@ -7,10 +7,10 @@
 class Personaje
 {
 private:
-    double velocidad = 0.1;
+    double velocidad = 0.3;
     sf::Texture textura;
     sf::Clock clock;
-    float frameTime = 0.1f;
+    float frameTime = 0.3f;
 
     int cuadroActual = 0;
     int numFrames = 8;
@@ -22,7 +22,7 @@ private:
     int score = 0;
 
 public:
-    float escalaBase = 0.1f; // Escala base del sprite
+    float escalaBase = 0.7f; // Ajusta aquí el tamaño del personaje
     bool atacando = false;
     bool puedeAtacar = true;
 
@@ -53,10 +53,13 @@ public:
             throw "No se pudo crear la textura";
         }
         sprite.setTexture(textura);
+
+        // Centrar el origen antes de posición y escala
         sf::FloatRect bounds = sprite.getLocalBounds();
         sprite.setOrigin(bounds.width / 2, bounds.height / 2);
-        sprite.setPosition(position.x, 654);
-        sprite.setScale(0.1f, 0.1f); // Escala base
+
+        sprite.setPosition(position.x, 900);
+        sprite.setScale(escalaBase, escalaBase); // Escala base ajustable
     }
 
     void mover(float offsetX)
@@ -79,7 +82,7 @@ public:
             int top = filaActual * frameHeight;
 
             sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
-            sprite.setPosition(sprite.getPosition().x, 654);
+            sprite.setPosition(sprite.getPosition().x, 900);
             clock.restart();
         }
     }
@@ -91,15 +94,15 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-0.1f, 0.1f); // Voltear sprite horizontalmente
+            sprite.setScale(-escalaBase, escalaBase); // Voltear a la izquierda
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(0.1f, 0.1f); // Restaurar orientación
+            sprite.setScale(escalaBase, escalaBase); // Derecha
             movio = true;
-            sprite.setPosition(sprite.getPosition().x, 654);
+            sprite.setPosition(sprite.getPosition().x, 900);
         }
 
         // Ataque
@@ -123,14 +126,13 @@ public:
         {
             filaActual = 0;
         }
-        sprite.setPosition(sprite.getPosition().x, 654);
-        std::cout << "Posición Y: " << sprite.getPosition().y << std::endl;
+        sprite.setPosition(sprite.getPosition().x, 900);
     }
 
     sf::FloatRect getHitbox() const
     {
         return sf::FloatRect(
-            sprite.getPosition().x - 32,
+            sprite.getPosition().x - 64,
             sprite.getPosition().y - 128,
             64,
             128

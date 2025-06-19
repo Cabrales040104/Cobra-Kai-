@@ -17,6 +17,7 @@ private:
     float switchTime = 1.0f;
 
 public:
+    float escalaBase = 0.3f; // Escala por defecto para la imagen
     Menu(std::vector<std::string> imagenes)
     {
         imagePaths = imagenes;
@@ -81,7 +82,7 @@ public:
         }
         else
         {
-            sprite.setScale(0.1f, 0.1f); // Escala por defecto si no se proporciona tamaño de ventana
+            sprite.setScale(escalaBase, escalaBase); // Escala por defecto si no se proporciona tamaño de ventana
         }
     }
 

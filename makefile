@@ -10,7 +10,7 @@ LDFLAGS  =	-Llib -lsfml-graphics -lsfml-window -lsfml-system
 all:	$(TARGET)
 
 $(TARGET):	$(OBJ) | bin
-	$(CXX) $^ -o $@ $(LDFLAGS)
+	$(CXX) $^ -o $@ -mconsole $(LDFLAGS)
 
 build/%.o:	src/%.cpp | build
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -25,7 +25,9 @@ run:	all
 	.\main.exe
 
 clean:
-	-del /Q build\* bin\* main.exe
+	-del /Q build\* bin\*
+	-del /Q bin\*
+	-del /Q main.exe
 
 .PHONY:	all run clean
 

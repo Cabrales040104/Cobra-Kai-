@@ -10,6 +10,7 @@ class Campo
     sf::Sprite sprite_;
 
 public:
+    float escalaBase = 0.3f; // Escala por defecto para el campo
     explicit Campo(const std::string &archivo)
     {
         if (!textura_.loadFromFile("assets/images/" + archivo))
@@ -20,7 +21,7 @@ public:
         sprite_.setTexture(textura_);
         sprite_.setOrigin(0, 0);
         sprite_.setPosition(0, 0);
-        sprite_.setScale(0.1f, 0.1f);
+        sprite_.setScale(escalaBase, escalaBase);
     }
 
     void dibujar(sf::RenderWindow &w) const { w.draw(sprite_); }
@@ -45,7 +46,7 @@ public:
         }
         else
         {
-            sprite_.setScale(0.1f, 0.1f);
+            sprite_.setScale(escalaBase, escalaBase);
         }
     }
 };
