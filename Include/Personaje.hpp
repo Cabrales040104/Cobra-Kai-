@@ -22,6 +22,7 @@ private:
     int score = 0;
 
 public:
+    float escalaBase = 0.1f; // Escala base del sprite
     bool atacando = false;
     bool puedeAtacar = true;
 
@@ -90,13 +91,13 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
+            sprite.setScale(-0.1f, 0.1f); // Voltear sprite horizontalmente
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(6.f, 6.f); // Restaurar orientación
+            sprite.setScale(0.1f, 0.1f); // Restaurar orientación
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }
