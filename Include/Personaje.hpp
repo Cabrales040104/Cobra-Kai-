@@ -8,7 +8,7 @@ class Personaje
 {
 private:
     double velocidad = 0.1;
-    sf::Texture texture;
+    sf::Texture textura;
     sf::Clock clock;
     float frameTime = 0.1f;
 
@@ -48,14 +48,15 @@ public:
                 }
             }
         }
-        if (!texture.loadFromImage(img))
+        if (!textura.loadFromImage(img))
         {
             throw "No se pudo crear la textura";
         }
-        sprite.setTexture(texture);
-        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
-        sprite.setOrigin(frameWidth / 2.f, frameHeight);
+        sprite.setTexture(textura);
+        sf::FloatRect bounds = sprite.getLocalBounds();
+        sprite.setOrigin(bounds.width / 2, bounds.height / 2);
         sprite.setPosition(position.x, 654);
+        sprite.setScale(1.f, 1.f); // Escala base
     }
 
     void mover(float offsetX)
@@ -71,7 +72,6 @@ public:
 
     void actualizar()
     {
-        // Animación simple: recorre los cuadros de la fila actual
         if (clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
@@ -91,13 +91,13 @@ public:
         if (sf::Keyboard::isKeyPressed(control.izquierda))
         {
             mover(-velocidad);
-            sprite.setScale(-0.1f, 0.1f); // Voltear sprite horizontalmente
+            sprite.setScale(-1.f, 1.f); // Voltear sprite horizontalmente
             movio = true;
         }
         else if (sf::Keyboard::isKeyPressed(control.derecha))
         {
             mover(velocidad);
-            sprite.setScale(0.1f, 0.1f); // Restaurar orientación
+            sprite.setScale(1.f, 1.f); // Restaurar orientación
             movio = true;
             sprite.setPosition(sprite.getPosition().x, 654);
         }
@@ -110,13 +110,11 @@ public:
             filaActual = 2;
         }
 
-        // Permitir ataque nuevamente al soltar tecla
         if (!sf::Keyboard::isKeyPressed(teclaAtaque))
         {
             puedeAtacar = true;
         }
 
-        // Si se está moviendo, usar fila de movimiento (opcional)
         if (movio && !atacando)
         {
             filaActual = 1;
@@ -132,10 +130,10 @@ public:
     sf::FloatRect getHitbox() const
     {
         return sf::FloatRect(
-            sprite.getPosition().x - 32, // Ajusta según el personaje
+            sprite.getPosition().x - 32,
             sprite.getPosition().y - 128,
-            64, // ancho del hitbox
-            128 // alto del hitbox
+            64,
+            128
         );
     }
 
