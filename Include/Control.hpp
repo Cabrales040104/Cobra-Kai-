@@ -11,7 +11,9 @@ public:
         sf::Keyboard::Key derecha,
         sf::Keyboard::Key izquierda,
         sf::Keyboard::Key ataque,
-        sf::Keyboard::Key defensa) : derecha(derecha), izquierda(izquierda), ataque(ataque), defensa(defensa) {}
+        sf::Keyboard::Key defensa) : derecha(derecha), izquierda(izquierda), ataque(ataque), defensa(defensa)
+    {
+    }
 
     Control() = default;
 };

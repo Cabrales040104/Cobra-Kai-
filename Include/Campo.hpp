@@ -10,7 +10,7 @@ class Campo
     sf::Sprite sprite_;
 
 public:
-    float escalaBase = 0.3f; // Escala por defecto para el campo
+    float escalaBase = 0.3f;
     explicit Campo(const std::string &archivo)
     {
         if (!textura_.loadFromFile("assets/images/" + archivo))

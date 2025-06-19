@@ -15,14 +15,14 @@ private:
     int cuadroActual = 0;
     int numFrames = 8;
     int frameWidth = 128;
-    int frameHeight = 256;
+    int frameHeight = 384; // Asegúrate que esto sea la altura real de tu sprite
     int filaActual = 0;
     Control control;
     Vida healthBar;
     int score = 0;
 
 public:
-    float escalaBase = 0.7f; // Ajusta aquí el tamaño del personaje
+    float escalaBase = 0.7f; // Escala ajustable
     bool atacando = false;
     bool puedeAtacar = true;
 
@@ -34,8 +34,10 @@ public:
         sf::Image img;
         if (!img.loadFromFile("assets/images/" + imagen))
         {
-            throw "No se pudo cargar la imagen: ";
+            throw "No se pudo cargar la imagen";
         }
+
+        // Hacer transparente un color específico
         sf::Vector2u size = img.getSize();
         for (unsigned int y = 0; y < size.y; ++y)
         {
@@ -48,24 +50,23 @@ public:
                 }
             }
         }
+
         if (!textura.loadFromImage(img))
         {
             throw "No se pudo crear la textura";
         }
+
         sprite.setTexture(textura);
-
-        // Centrar el origen antes de posición y escala
-        sf::FloatRect bounds = sprite.getLocalBounds();
-        sprite.setOrigin(bounds.width / 2, bounds.height / 2);
-
-        sprite.setPosition(position.x, 900);
-        sprite.setScale(escalaBase, escalaBase); // Escala base ajustable
+        sprite.setTextureRect(sf::IntRect(0, 0, frameWidth, frameHeight));
+        sprite.setOrigin(frameWidth / 2.f, frameHeight); // origen desde el centro abajo
+        sprite.setScale(escalaBase, escalaBase);
+        sprite.setPosition(position.x, 654); // alineado con el piso
     }
 
     void mover(float offsetX)
     {
         sprite.move(offsetX, 0);
-    };
+    }
 
     void dibujar(sf::RenderWindow &window)
     {
@@ -75,7 +76,7 @@ public:
 
     void actualizar()
     {
-        if(clock.getElapsedTime().asSeconds() >= frameTime)
+        if (clock.getElapsedTime().asSeconds() >= frameTime)
         {
             cuadroActual = (cuadroActual + 1) % numFrames;
             int left = cuadroActual * frameWidth;
@@ -83,21 +84,21 @@ public:
 
             if (sprite.getScale().x < 0)
             {
-                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));  
+                sprite.setTextureRect(sf::IntRect(left + frameWidth, top, -frameWidth, frameHeight));
             }
             else
             {
                 sprite.setTextureRect(sf::IntRect(left, top, frameWidth, frameHeight));
             }
 
-            sprite.setPosition(sprite.getPosition().x, 654);
             clock.restart();
         }
     }
 
     void aplicarEscala(bool mirandoIzquierda)
     {
-        sprite.setScale(mirandoIzquierda ? -0.1f : 0.1f, 0.1f);
+        float escala = escalaBase;
+        sprite.setScale(mirandoIzquierda ? -escala : escala, escala);
     }
 
     void leerTeclado(sf::Keyboard::Key teclaAtaque)
@@ -115,10 +116,8 @@ public:
             mover(velocidad);
             aplicarEscala(false);
             movio = true;
-            sprite.setPosition(sprite.getPosition().x, 900);
         }
 
-        // Ataque
         if (sf::Keyboard::isKeyPressed(teclaAtaque) && puedeAtacar)
         {
             atacando = true;
@@ -139,17 +138,15 @@ public:
         {
             filaActual = 0;
         }
-        sprite.setPosition(sprite.getPosition().x, 900);
     }
 
     sf::FloatRect getHitbox() const
     {
         return sf::FloatRect(
             sprite.getPosition().x - 64,
-            sprite.getPosition().y - 128,
+            sprite.getPosition().y - frameHeight,
             64,
-            128
-        );
+            frameHeight);
     }
 
     void takeDamage(int damage)

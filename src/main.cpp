@@ -13,42 +13,46 @@ int main()
 {
     sf::RenderWindow window(sf::VideoMode(960, 654), "Cobra Kai", sf::Style::Close | sf::Style::Titlebar);
 
-    // Crear una lista de imágenes que se mostrarán en el menú
+    sf::Music musicaFondo;
+    if (!musicaFondo.openFromFile("assets/sounds/AudioKarate.mp3"))
+    {
+        throw std::runtime_error("No se pudo cargar la música de fondo");
+    }
+    musicaFondo.setLoop(true);
+    musicaFondo.play();
+
     std::vector<std::string> imagenes = {"1.png"};
-        
-    Menu menu(imagenes); // Crear el menú con las imágenes
+
+    Menu menu(imagenes);
     menu.ajustarImagenAITamanoVentana(window.getSize());
     Campo campo("1.png");
 
-    // Controladores y personajes como antes
     Control control1(
-        sf::Keyboard::Right,  // derecha
-        sf::Keyboard::Left,   // izquierda
-        sf::Keyboard::N, // ataque (cambiado a Shift derecho)
-        sf::Keyboard::M       // defensa
+        sf::Keyboard::Right, // derecha
+        sf::Keyboard::Left,  // izquierda
+        sf::Keyboard::N,     // ataque
+        sf::Keyboard::M      // defensa
     );
     Control control2(
-        sf::Keyboard::D,     // derecha
-        sf::Keyboard::A,     // izquierda
-        sf::Keyboard::F,     // ataque
-        sf::Keyboard::G      // defensa   
+        sf::Keyboard::D, // derecha
+        sf::Keyboard::A, // izquierda
+        sf::Keyboard::F, // ataque
+        sf::Keyboard::G  // defensa
     );
-   const int alturaVentana = 654; // Altura de la ventana del juego
-    const float posYPersonaje = alturaVentana - 10; // Posición Y del personaje (10 px sobre el suelo)
+    const int alturaVentana = 654;
+    const float posYPersonaje = alturaVentana - 10;
 
     Personaje Dan(sf::Vector2f(610, posYPersonaje), "ADann.png", control1, {601, 55});
     Personaje Johnn(sf::Vector2f(260, posYPersonaje), "AJohnn.png", control2, {8, 55});
 
-    // Crear el texto de victoria
     sf::Text winText;
-    winText.setFont(menu.getFont());        // Usamos el método público para acceder a la fuente
-    winText.setCharacterSize(30);           // Tamaño del texto
-    winText.setFillColor(sf::Color::White); // Color blanco para el texto
+    winText.setFont(menu.getFont());
+    winText.setCharacterSize(30);
+    winText.setFillColor(sf::Color::White);
 
-    bool gameOver = false;   // Para controlar si el juego terminó
-    std::string winner = ""; // Para almacenar quién ganó
+    bool gameOver = false;
+    std::string winner = "";
 
-    // ----------- CICLO DEL MENÚ DE INICIO -----------
     bool enMenu = true;
     while (window.isOpen() && enMenu)
     {
@@ -58,19 +62,17 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter)
-                enMenu = false; // Salir del menú si se presiona Enter
+                enMenu = false;
         }
 
-        menu.actualizar(); // Actualizar el menú (para cambiar las imágenes)
+        menu.actualizar();
         window.clear();
-        menu.dibujar(window); // Dibujar el menú (que incluye la imagen y el texto)
+        menu.dibujar(window);
         window.display();
     }
-    // ----------- FIN DEL CICLO DEL MENÚ DE INICIO -----------
 
-    campo.cambiarImagen("5.png", window.getSize()); // Cambiar el fondo del campo de batalla
+    campo.cambiarImagen("5.png", window.getSize());
 
-    // Aquí ya comenzaría el juego con los personajes
     while (window.isOpen())
     {
         sf::Event event;
@@ -88,7 +90,6 @@ int main()
 
         Colision::manejar(Dan, Johnn);
 
-        // Comprobar si alguien ha ganado
         if (Dan.getHealth() == 0)
         {
             winner = "¡Gano Jugador 1!";
@@ -101,8 +102,7 @@ int main()
         }
 
         window.clear();
-    
-        // Si el juego ha terminado, mostrar el mensaje de victoria
+
         if (gameOver)
         {
             winText.setString(winner);                                                                                                                      // Establecer el texto del ganador
@@ -110,14 +110,13 @@ int main()
             window.draw(winText);                                                                                                                           // Dibujar el texto de victoria
             window.display();                                                                                                                               // Mostrar el mensaje de victoria
 
-            // Esperar un momento antes de cerrar el juego
-            sf::sleep(sf::seconds(2)); // Esperar 2 segundos para que el jugador vea el mensaje de victoria
+            sf::sleep(sf::seconds(2));
 
-            break; // Salir del ciclo para cerrar el juego después de la victoria
+            break;
         }
         else
         {
-            // Si el juego no ha terminado, se sigue actualizando y dibujando los personajes
+
             campo.dibujar(window);
             Dan.dibujar(window);
             Johnn.dibujar(window);

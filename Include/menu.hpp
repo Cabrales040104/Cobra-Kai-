@@ -9,7 +9,7 @@ class Menu
 private:
     sf::Sprite sprite;
     sf::Texture texture;
-    sf::Font font; // Esta sigue siendo privada
+    sf::Font font;
     sf::Text text;
     std::vector<std::string> imagePaths;
     int currentImageIndex = 0;
@@ -17,7 +17,7 @@ private:
     float switchTime = 1.0f;
 
 public:
-    float escalaBase = 0.3f; // Escala por defecto para la imagen
+    float escalaBase = 0.3f;
     Menu(std::vector<std::string> imagenes)
     {
         imagePaths = imagenes;
@@ -82,11 +82,10 @@ public:
         }
         else
         {
-            sprite.setScale(escalaBase, escalaBase); // Escala por defecto si no se proporciona tamaño de ventana
+            sprite.setScale(escalaBase, escalaBase);
         }
     }
 
-    // Método público para obtener la fuente
     sf::Font &getFont()
     {
         return font;

@@ -31,5 +31,8 @@ clean:
 
 .PHONY:	all run clean
 
+LDFLAGS = -Llib -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+
 
 
