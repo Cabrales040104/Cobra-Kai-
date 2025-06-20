@@ -35,13 +35,13 @@ Elige tu bando para pelear. Este juego de pelea llamado Cobra Kai trata sobre do
 ![alt text](documento/ImagenesReadme/PlantPUML.png)
 
 ## Menú
-![alt text](<documento/ImagenesReadme/Referencia 1.png>)
+![alt text](<documento/ImagenesReadme/Referencia1.png>)
 
 ## Batalla
-![alt text](<documento/ImagenesReadme/Referencia 2.png>)
+![alt text](<documento/ImagenesReadme/Referencia2.png>)
 
 ## Fin de la partida
-![alt text](<documento/ImagenesReadme/Referencia 3.png>)
+![alt text](<documento/ImagenesReadme/Referencia3.png>)
 
 ## Enlace de funcionamiento del juego
 https://drive.google.com/file/d/144HiSyM1Vj1ejJ--cC0ewdmA40R9hw1l/view?usp=sharing
