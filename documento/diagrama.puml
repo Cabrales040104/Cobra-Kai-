@@ -11,7 +11,7 @@ class Menu {
   +Dibujar(Window: sf::RenderWindow): void
   +Actualizar(): void
   +ObtenerFont(): sf::Font&
-  +MostrarOpciones(): void
+  +MostrarOpciones(): voi
   +SeleccionarOpcion(Opcion: int): void
 }
 

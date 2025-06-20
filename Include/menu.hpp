@@ -18,19 +18,18 @@ private:
 
 public:
     float escalaBase = 0.3f;
-    Menu(std::vector<std::string> imagenes)
+    
+    Menu(std::vector<std::string> imagenes) : imagePaths(imagenes)
     {
-        imagePaths = imagenes;
-
         if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
         {
-            throw "No se encontró imagen";
+            throw std::runtime_error("No se encontró imagen: " + imagePaths[currentImageIndex]);
         }
         sprite = sf::Sprite(texture);
 
         if (!font.loadFromFile("assets/fonts/Dead Stock.ttf"))
         {
-            throw "No se pudo cargar la fuente";
+            throw std::runtime_error("No se pudo cargar la fuente");
         }
 
         text.setFont(font);
@@ -63,7 +62,7 @@ public:
 
             if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))
             {
-                throw "No se encontró la imagen";
+                throw std::runtime_error("No se encontró la imagen: " + imagePaths[currentImageIndex]);
             }
             sprite.setTexture(texture);
 
