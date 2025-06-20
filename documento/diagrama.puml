@@ -6,62 +6,94 @@ class Personaje
 class Colision
 class Sonido
 class Vida
+class Juego
+class sf_RenderWindow
+class Elemento
 
 class Menu {
-  +Dibujar(Window: sf::RenderWindow): void
+  +Dibujar(window: sf::RenderWindow): void
   +Actualizar(): void
   +ObtenerFont(): sf::Font&
-  +MostrarOpciones(): voi
-  +SeleccionarOpcion(Opcion: int): void
+  +IniciarJuego(): bool
+  +AjustarImagen(): void
 }
 
 class Campo {
-  +Dibujar(Window: sf::RenderWindow): void
-  +CargarFondo(Nombre: string): void
-  +Actualizar(): void
+  +Dibujar(window: sf::RenderWindow): void
+  +CambiarImagen(archivo: string): void
+  +CargarFondo(): void
 }
 
 class Control {
-  +LeerTeclado(Tecla: sf::Keyboard::Key): void
+  +LeerTeclado(tecla: sf::Keyboard::Key): void
   +ConfigurarTeclas(): void
 }
 
 class Personaje {
-  +Dibujar(Window: sf::RenderWindow): void
+  +Dibujar(window: sf::RenderWindow): void
   +Actualizar(): void
   +MoverDerecha(): void
   +MoverIzquierda(): void
-  +Atacar(): void
-  +Defender(): void
-  +RecibirDano(Cantidad: int): void
+  +IniciarAtaque(): void
+  +DefenderAtaque(): void
+  +RecibirDano(cantidad: int): void
+  +ObtenerVida(): int
+  +ObtenerPosicion(): sf::Vector2f
 }
 
 class Colision {
-  +Manejar(P1: Personaje, P2: Personaje): void
-  +Detectar(P1: Personaje, P2: Personaje): bool
+  +ManejarColision(p1: Personaje, p2: Personaje): void
+  +DetectarColision(p1: Personaje, p2: Personaje): bool
+  +SepararPersonajes(p1: Personaje, p2: Personaje): void
 }
 
 class Vida {
-  +Actualizar(): void
-  +Mostrar(Window: sf::RenderWindow): void
-  +Reducir(Cantidad: int): void
+  +ActualizarBarra(): void
+  +MostrarVida(window: sf::RenderWindow): void
+  +ReducirVida(cantidad: int): void
+  +CurarVida(cantidad: int): void
+  +ObtenerVidaActual(): int
 }
 
 class Sonido {
-  +Reproducir(Nombre: string): void
-  +Detener(): void
-  +Pausar(): void
+  +ReproducirMusica(nombre: string): void
+  +DetenerMusica(): void
+  +PausarMusica(): void
+  +CargarAudio(ruta: string): void
+  +ReproducirEfecto(nombre: string): void
 }
 
-Menu "1" o-- "1" Campo
+class Juego {
+  +IniciarJuego(): void
+  +ManejarEventos(): void
+  +ActualizarJuego(): void
+  +RenderizarJuego(): void
+  +VerificarVictoria(): void
+  +ReiniciarJuego(): void
+  +CambiarEstado(): void
+}
+
+class sf_RenderWindow {
+  <<SFML>>
+  +Draw(): void
+  +Display(): void
+  +Clear(): void
+}
+
+class Elemento {
+  +Inicializar(): void
+  +Actualizar(): void
+  +Destruir(): void
+}
+
 Menu "1" o-- "1" Sonido
 Personaje "1" *-- "1" Control
 Personaje "1" *-- "1" Vida
 Personaje "1" *-- "*" Sonido
-Campo --|> sf::RenderWindow
-Menu --|> sf::RenderWindow
-Vida --|> sf::RenderWindow
-Personaje --|> sf::RenderWindow
+Campo --|> sf_RenderWindow
+Menu --|> sf_RenderWindow
+Vida --|> sf_RenderWindow
+Personaje --|> sf_RenderWindow
 Menu --|> Elemento
 Campo --|> Elemento
 Control --|> Elemento
@@ -69,4 +101,11 @@ Personaje --|> Elemento
 Colision --|> Elemento
 Vida --|> Elemento
 Sonido --|> Elemento
+Juego "1" *-- "1" Menu
+Juego "1" *-- "1" Campo
+Juego "1" *-- "2" Personaje
+Juego "1" *-- "1" Colision
+Juego "1" *-- "1" Sonido
+Juego "1" *-- "1" sf_RenderWindow
+Juego --|> Elemento
 @enduml
