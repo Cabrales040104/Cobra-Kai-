@@ -1,5 +1,11 @@
 # COBRA KAI
 
+## Integrantes del equipo
+* Fernando Jauregui Vazquez 
+  24110238
+* Raúl Cabrales Carmona 
+  23310397
+
 ## Describción del juego
 Elige tu bando para pelear. Este juego de pelea llamado Cobra Kai trata sobre dos escuelas de karate que enseñan diferentes estilos de combate, con el propósito de defenderse de los abusivos. Elige a tu maestro favorito para ver quién es el mejor. ¿Estás listo?
 
