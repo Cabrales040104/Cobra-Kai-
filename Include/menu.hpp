@@ -18,7 +18,7 @@ private:
 
 public:
     float escalaBase = 0.3f;
-    
+
     Menu(std::vector<std::string> imagenes) : imagePaths(imagenes)
     {
         if (!texture.loadFromFile("assets/images/" + imagePaths[currentImageIndex]))

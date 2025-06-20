@@ -8,48 +8,46 @@ class Colision
 private:
     static sf::Clock clockDaño1;
     static sf::Clock clockDaño2;
-    static const float TIEMPO_ENTRE_DAÑOS; // Para evitar daño continuo
+    static const float TIEMPO_ENTRE_DAÑOS;
 
-    static void separarPersonajes(Personaje& p1, Personaje& p2)
+    static void separarPersonajes(Personaje &p1, Personaje &p2)
     {
         sf::FloatRect bounds1 = p1.getHitbox();
         sf::FloatRect bounds2 = p2.getHitbox();
         sf::FloatRect interseccion;
-        
+
         if (bounds1.intersects(bounds2, interseccion))
         {
-            // Calcular dirección de separación
+
             sf::Vector2f pos1 = p1.getPosicion();
             sf::Vector2f pos2 = p2.getPosicion();
-            
+
             float dx = pos1.x - pos2.x;
-            float separacion = interseccion.width / 2.0f + 1.0f; // +1 para evitar contacto
-            
-            if (dx > 0) // p1 está a la derecha de p2
+            float separacion = interseccion.width / 2.0f + 1.0f;
+
+            if (dx > 0)
             {
                 p1.sprite.move(separacion, 0);
                 p2.sprite.move(-separacion, 0);
             }
-            else // p1 está a la izquierda de p2
+            else
             {
                 p1.sprite.move(-separacion, 0);
                 p2.sprite.move(separacion, 0);
             }
         }
     }
-    
-    static void manejarAtaques(Personaje& p1, Personaje& p2)
+
+    static void manejarAtaques(Personaje &p1, Personaje &p2)
     {
         const int DAÑO_ATAQUE = 5;
-        
-        // P1 ataca a P2
+
         if (p1.estaAtacando() && clockDaño1.getElapsedTime().asSeconds() >= TIEMPO_ENTRE_DAÑOS)
         {
             p2.takeDamage(DAÑO_ATAQUE);
             clockDaño1.restart();
         }
-        
-        // P2 ataca a P1
+
         if (p2.estaAtacando() && clockDaño2.getElapsedTime().asSeconds() >= TIEMPO_ENTRE_DAÑOS)
         {
             p1.takeDamage(DAÑO_ATAQUE);
@@ -58,24 +56,22 @@ private:
     }
 
 public:
-    static bool detectar(const Personaje& p1, const Personaje& p2)
+    static bool detectar(const Personaje &p1, const Personaje &p2)
     {
         return p1.getHitbox().intersects(p2.getHitbox());
     }
-    
-    static void manejar(Personaje& p1, Personaje& p2)
+
+    static void manejar(Personaje &p1, Personaje &p2)
     {
-        if (!detectar(p1, p2)) return;
-        
-        // Separar personajes para evitar que se atraviesen
+        if (!detectar(p1, p2))
+            return;
+
         separarPersonajes(p1, p2);
-        
-        // Manejar daño de ataques
+
         manejarAtaques(p1, p2);
     }
 };
 
-// Definición de variables estáticas (deben estar en el .hpp para header-only)
 sf::Clock Colision::clockDaño1;
 sf::Clock Colision::clockDaño2;
 const float Colision::TIEMPO_ENTRE_DAÑOS = 0.5f;

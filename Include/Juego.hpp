@@ -14,29 +14,28 @@
 class Juego
 {
 private:
-    // Ventana y configuración
     sf::RenderWindow window;
     const int ANCHO_VENTANA = 960;
     const int ALTO_VENTANA = 654;
-    
-    // Audio
+
     sf::Music musicaFondo;
-    
-    // Componentes del juego
+
     std::unique_ptr<Menu> menu;
     std::unique_ptr<Campo> campo;
     std::unique_ptr<Personaje> jugador1;
     std::unique_ptr<Personaje> jugador2;
-    
-    // Controles
+
     Control control1;
     Control control2;
-    
-    // Estado del juego
-    enum EstadoJuego { MENU, JUGANDO, GAME_OVER };
+
+    enum EstadoJuego
+    {
+        MENU,
+        JUGANDO,
+        GAME_OVER
+    };
     EstadoJuego estadoActual;
-    
-    // Texto de victoria
+
     sf::Text textoVictoria;
     sf::Clock clockGameOver;
     bool juegoTerminado;
@@ -73,7 +72,7 @@ public:
 private:
     void inicializarVentana()
     {
-        window.create(sf::VideoMode(ANCHO_VENTANA, ALTO_VENTANA), "Cobra Kai", 
+        window.create(sf::VideoMode(ANCHO_VENTANA, ALTO_VENTANA), "Cobra Kai",
                       sf::Style::Close | sf::Style::Titlebar);
         window.setFramerateLimit(60);
     }
@@ -82,7 +81,7 @@ private:
     {
         if (!musicaFondo.openFromFile("assets/sounds/AudioRocky.mp3"))
         {
-            throw std::runtime_error("No se pudo cargar la música de fondo");
+            throw std::runtime_error("No se pudo cargar la musica de fondo");
         }
         musicaFondo.setLoop(true);
         musicaFondo.play();
@@ -91,46 +90,40 @@ private:
     void inicializarControles()
     {
         control1 = Control(
-            sf::Keyboard::Right, // derecha
-            sf::Keyboard::Left,  // izquierda
-            sf::Keyboard::N,     // ataque
-            sf::Keyboard::M      // defensa
-        );
-        
+            sf::Keyboard::Right,
+            sf::Keyboard::Left,
+            sf::Keyboard::N,
+            sf::Keyboard::M);
+
         control2 = Control(
-            sf::Keyboard::D, // derecha
-            sf::Keyboard::A, // izquierda
-            sf::Keyboard::F, // ataque
-            sf::Keyboard::G  // defensa
-        );
+            sf::Keyboard::D,
+            sf::Keyboard::A,
+            sf::Keyboard::F,
+            sf::Keyboard::G);
     }
 
     void inicializarComponentes()
     {
-        // Inicializar menú
+
         std::vector<std::string> imagenes = {"1.png"};
         menu = std::make_unique<Menu>(imagenes);
         menu->ajustarImagenAITamanoVentana(window.getSize());
-        
-        // Inicializar campo
+
         campo = std::make_unique<Campo>("5.png");
         campo->cambiarImagen("5.png", window.getSize());
-        
-        // Inicializar personajes
+
         const float posYPersonaje = ALTO_VENTANA - 10;
         jugador1 = std::make_unique<Personaje>(
-            sf::Vector2f(610, posYPersonaje), 
-            "ADann.png", 
-            control1, 
-            sf::Vector2f(601, 55)
-        );
-        
+            sf::Vector2f(610, posYPersonaje),
+            "ADann.png",
+            control1,
+            sf::Vector2f(601, 55));
+
         jugador2 = std::make_unique<Personaje>(
-            sf::Vector2f(260, posYPersonaje), 
-            "AJohnn.png", 
-            control2, 
-            sf::Vector2f(8, 55)
-        );
+            sf::Vector2f(260, posYPersonaje),
+            "AJohnn.png",
+            control2,
+            sf::Vector2f(8, 55));
     }
 
     void inicializarTextos()
@@ -150,33 +143,33 @@ private:
             {
                 window.close();
             }
-            
+
             switch (estadoActual)
             {
-                case MENU:
-                    if (event.type == sf::Event::KeyPressed && 
-                        event.key.code == sf::Keyboard::Enter)
+            case MENU:
+                if (event.type == sf::Event::KeyPressed &&
+                    event.key.code == sf::Keyboard::Enter)
+                {
+                    estadoActual = JUGANDO;
+                }
+                break;
+
+            case GAME_OVER:
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == sf::Keyboard::Enter)
                     {
-                        estadoActual = JUGANDO;
+                        reiniciarJuego();
                     }
-                    break;
-                    
-                case GAME_OVER:
-                    if (event.type == sf::Event::KeyPressed)
+                    else if (event.key.code == sf::Keyboard::Escape)
                     {
-                        if (event.key.code == sf::Keyboard::Enter)
-                        {
-                            reiniciarJuego();
-                        }
-                        else if (event.key.code == sf::Keyboard::Escape)
-                        {
-                            window.close();
-                        }
+                        window.close();
                     }
-                    break;
-                    
-                default:
-                    break;
+                }
+                break;
+
+            default:
+                break;
             }
         }
     }
@@ -185,15 +178,15 @@ private:
     {
         switch (estadoActual)
         {
-            case MENU:
-                actualizarMenu();
-                break;
-            case JUGANDO:
-                actualizarJuego();
-                break;
-            case GAME_OVER:
-                actualizarGameOver();
-                break;
+        case MENU:
+            actualizarMenu();
+            break;
+        case JUGANDO:
+            actualizarJuego();
+            break;
+        case GAME_OVER:
+            actualizarGameOver();
+            break;
         }
     }
 
@@ -204,24 +197,21 @@ private:
 
     void actualizarJuego()
     {
-        // Leer controles de los jugadores
+
         jugador1->leerTeclado(sf::Keyboard::N);
         jugador2->leerTeclado(sf::Keyboard::F);
-        
-        // Actualizar personajes
+
         jugador1->actualizar();
         jugador2->actualizar();
-        
-        // Manejar colisiones
+
         Colision::manejar(*jugador1, *jugador2);
-        
-        // Verificar condiciones de victoria
+
         verificarVictoria();
     }
 
     void actualizarGameOver()
     {
-        // Esperar un tiempo antes de permitir acciones
+
         if (clockGameOver.getElapsedTime().asSeconds() < 1.0f)
         {
             return;
@@ -232,13 +222,13 @@ private:
     {
         if (jugador1->getHealth() <= 0)
         {
-            ganador = "¡Ganó Jugador 2 (WASD + F/G)!";
+            ganador = "Gano Jugador 2";
             estadoActual = GAME_OVER;
             clockGameOver.restart();
         }
         else if (jugador2->getHealth() <= 0)
         {
-            ganador = "¡Ganó Jugador 1 (Flechas + N/M)!";
+            ganador = "Gano Jugador 1";
             estadoActual = GAME_OVER;
             clockGameOver.restart();
         }
@@ -247,20 +237,20 @@ private:
     void renderizar()
     {
         window.clear();
-        
+
         switch (estadoActual)
         {
-            case MENU:
-                renderizarMenu();
-                break;
-            case JUGANDO:
-                renderizarJuego();
-                break;
-            case GAME_OVER:
-                renderizarGameOver();
-                break;
+        case MENU:
+            renderizarMenu();
+            break;
+        case JUGANDO:
+            renderizarJuego();
+            break;
+        case GAME_OVER:
+            renderizarGameOver();
+            break;
         }
-        
+
         window.display();
     }
 
@@ -278,51 +268,43 @@ private:
 
     void renderizarGameOver()
     {
-        // Mostrar el campo de fondo
+
         campo->dibujar(window);
-        
-        // Configurar y mostrar texto de victoria
-        textoVictoria.setString(ganador + "\n\nPresiona ENTER para jugar de nuevo\nPresiona ESC para salir");
-        
-        // Centrar el texto
+
+        textoVictoria.setString(ganador + "\n\nPresiona ENTER para jugar de nuevo \n o\n Presiona ESC para salir");
+
         sf::FloatRect textBounds = textoVictoria.getLocalBounds();
         textoVictoria.setPosition(
             (ANCHO_VENTANA - textBounds.width) / 2,
-            (ALTO_VENTANA - textBounds.height) / 2
-        );
-        
-        // Dibujar un fondo semi-transparente para el texto
+            (ALTO_VENTANA - textBounds.height) / 2);
+
         sf::RectangleShape fondo(sf::Vector2f(textBounds.width + 40, textBounds.height + 40));
         fondo.setFillColor(sf::Color(0, 0, 0, 180));
         fondo.setPosition(
             textoVictoria.getPosition().x - 20,
-            textoVictoria.getPosition().y - 20
-        );
-        
+            textoVictoria.getPosition().y - 20);
+
         window.draw(fondo);
         window.draw(textoVictoria);
     }
 
     void reiniciarJuego()
     {
-        // Reinicializar personajes
+
         const float posYPersonaje = ALTO_VENTANA - 10;
-        
+
         jugador1 = std::make_unique<Personaje>(
-            sf::Vector2f(610, posYPersonaje), 
-            "ADann.png", 
-            control1, 
-            sf::Vector2f(601, 55)
-        );
-        
+            sf::Vector2f(610, posYPersonaje),
+            "ADann.png",
+            control1,
+            sf::Vector2f(601, 55));
+
         jugador2 = std::make_unique<Personaje>(
-            sf::Vector2f(260, posYPersonaje), 
-            "AJohnn.png", 
-            control2, 
-            sf::Vector2f(8, 55)
-        );
-        
-        // Resetear estado
+            sf::Vector2f(260, posYPersonaje),
+            "AJohnn.png",
+            control2,
+            sf::Vector2f(8, 55));
+
         juegoTerminado = false;
         ganador = "";
         estadoActual = JUGANDO;

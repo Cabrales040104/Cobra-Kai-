@@ -8,7 +8,7 @@ int main()
         Juego juego;
         juego.iniciar();
     }
-    catch (const std::exception& e)
+    catch (const std::exception &e)
     {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
